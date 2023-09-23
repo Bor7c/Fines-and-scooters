@@ -19,7 +19,8 @@ def GetOrders(request):
         if input_text:
             current_orders = [order for order in orders if input_text.lower() in order['short_text'].lower()]
             return render(request, 'orders.html', {'data' : {
-                'orders': current_orders,   
+                'orders': current_orders,
+                'search_v': input_text,
             }})
     except:
         return render(request, 'orders.html', {'data' : {
