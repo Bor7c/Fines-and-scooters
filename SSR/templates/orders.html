@@ -11,7 +11,7 @@
 
 <form method="GET" enctype="multipart/form-data">
   <input class="input_text" name="text" type="search" required value="{{data.search_v}}">
-  <i class="fa fa-search"></i>
+  <i class="fa fa-search" name="search"></i>
 </form>
 
 
@@ -21,7 +21,7 @@
       <div class="box">
         <div class="content">
           <h2>{{ order.price }}</h2>
-          <h3>{{order.short_text}}</h3>
+          <h3>{{order.title}}</h3>
           <h3>{% include 'order_element.html' with element=order %}</h3>
         </div>
       </div>

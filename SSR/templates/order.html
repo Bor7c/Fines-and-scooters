@@ -1,14 +1,14 @@
 {% extends 'base.html' %}
     
-{% block title %}{{data.order.short_text}}{% endblock %}
+{% block title %}{{data.order.title}}{% endblock %}
 
 {% block content %}
     <body>
         <span class="circle-image">
-            <img src = {{data.order.img}}><img/>
+            <img src = {{data.order.picture_url}}><img/>
         </span>
 
-        <d class="short_text">{{data.order.short_text}}</d>
+        <d class="short_text">{{data.order.title}}</d>
 
         <hr class = "line">
         
