@@ -230,8 +230,10 @@ body .container .card .box:before {
 }
 
 body .container .card .box .content {
-  padding: 20px;
+  padding: 8px;
   text-align: center;
+  margin-left: 0%;
+  margin-right: 13%;
 }
 
 body .container .card .box .content h2 {
@@ -389,5 +391,106 @@ form:valid .fa{
   margin-left: 100px;
   margin-bottom: 70px;
   margin-top: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+.cl-btn-1 {
+  margin: 20px;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  height: 450px;
+}    
+.cl-btn-1 div {
+  width: 80px;
+  height: 80px;
+  position: absolute;
+  background: #b3b3b3;
+  border-radius: 30%;
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  border: 6px solid #970000;
+  cursor: pointer;
+}
+.cl-btn-1 div > span {
+  background-color: #2a2b2f;
+  display: block;
+  height: 7px;
+  border-radius: 6px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  position: absolute;
+  top: 65%;
+  margin-top: -6px;
+  left: 21px;
+  width: 35px;
+}
+.cl-btn-1 div > span span {
+  display: block;
+  background-color: #970000;
+  width: 7px;
+  height: 7px;
+  border-radius: 7px;
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  position: absolute;
+  left: -12px;
+  top: 0px;
+}
+.cl-btn-1 div > span.left {
+  transform: rotate(45deg);
+  transform-origin: center;
+}
+.cl-btn-1 div > span.left .circle-left {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 12px;
+}
+.cl-btn-1 div > span.left .circle-right {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 40px;
+}
+.cl-btn-1 div > span.right {
+  transform: rotate(-45deg);
+  transform-origin: center;
+}
+.cl-btn-1 div > span.right .circle-left {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 12px;
+}
+.cl-btn-1 div > span.right .circle-right {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 40px;
+}
+.cl-btn-1 div:hover > span {
+  background-color: #970000;
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+.cl-btn-1 div:hover > span span {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  background-color: #970000;
+}
+.cl-btn-1 div:hover > span.left .circle-left {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 40px;
+}
+.cl-btn-1 div:hover > span.left .circle-right {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 12px;
+}
+.cl-btn-1 div:hover > span.right .circle-left {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 40px;
+}
+.cl-btn-1 div:hover > span.right .circle-right {
+  transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+  margin-left: 12px;
 }
 
