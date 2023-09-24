@@ -10,14 +10,14 @@ def GetOrders(request):
     try:
         input_text = request.GET['text']
         if input_text:
-            current_orders = [order for order in models.Fines.objects.all() if input_text.lower() in order.title.lower() or input_text.lower() in order.price.lower()]
+            current_orders = [order for order in models.Fines.objects.filter(fine_status='действует') if input_text.lower() in order.title.lower() or input_text.lower() in order.price.lower()]
             return render(request, 'orders.html', {'data' : {
                 'orders': current_orders,
                 'search_v': input_text,
             }})
     except:
         return render(request, 'orders.html', {'data' : {
-                'orders': models.Fines.objects.filter(),   
+                'orders': models.Fines.objects.filter(fine_status='действует'),   
             }})
 
 def GetOrder(request, id):

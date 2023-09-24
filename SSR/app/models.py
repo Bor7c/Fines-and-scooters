@@ -78,12 +78,12 @@ class AuthUserUserPermissions(models.Model):
 
 
 class Breaches(models.Model):
-    breach_id = models.BigAutoField(db_column='breach_ID', primary_key=True)  # Field name made lowercase.
-    user = models.ForeignKey('Users', models.DO_NOTHING, db_column='user_ID', blank=True, null=True)  # Field name made lowercase.
-    breach_status = models.TextField()  # This field type is a guess.
+    breach_id = models.BigAutoField(primary_key=True)
+    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     breach_date = models.DateField(blank=True, null=True)
     review_date = models.DateField(blank=True, null=True)
     finish_date = models.DateField(blank=True, null=True)
+    breach_status = models.TextField()  # This field type is a guess.
 
     class Meta:
         managed = False
@@ -146,7 +146,7 @@ class DjangoSession(models.Model):
 
 
 class Fines(models.Model):
-    fine_id = models.AutoField(db_column='fine_ID', primary_key=True)  # Field name made lowercase.
+    fine_id = models.AutoField(primary_key=True)
     picture_url = models.CharField(blank=True, null=True)
     title = models.CharField(blank=True, null=True)
     price = models.CharField(blank=True, null=True)
