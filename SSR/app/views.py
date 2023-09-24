@@ -16,9 +16,6 @@ def GetOrders(request):
             }})
 
 def GetOrder(request, id):
-    # for order in models.Fines:
-    #     if order['id'] == models.Fines:
-    #         current_order = order
     return render(request, 'order.html', {'data' : {
         
         'id': id,
