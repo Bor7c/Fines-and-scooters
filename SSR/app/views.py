@@ -22,10 +22,11 @@ def GetOrders(request):
 
 def GetOrder(request, id):
     return render(request, 'order.html', {'data' : {
-        
         'id': id,
         'order':models.Fines.objects.filter(fine_id=id).first(),
     }})
+
+
 
 def Click_on_HideCard(request, id):
     if not HideCard(id):

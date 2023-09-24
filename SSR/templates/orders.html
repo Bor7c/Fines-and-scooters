@@ -36,9 +36,9 @@
           </div>
         </a>
         <div class="content">
-          <h2>{{ order.price }}</h2>
+          <h2>{{order.price}}</h2>
           <h3>{{order.title}}</h3>
-          <h3>{% include 'order_element.html' with element=order %}</h3>
+          <h3><div><a href="{% url 'order_url' order.fine_id %}">Подробнее</a> </div></h3>
         </div>
       </div>
     </div>

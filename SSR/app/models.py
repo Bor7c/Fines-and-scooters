@@ -147,10 +147,10 @@ class DjangoSession(models.Model):
 
 class Fines(models.Model):
     fine_id = models.AutoField(primary_key=True)
-    picture_url = models.CharField(blank=True, null=True)
-    title = models.CharField(blank=True, null=True)
-    price = models.CharField(blank=True, null=True)
-    text = models.CharField(blank=True, null=True)
+    picture_url = models.CharField()
+    title = models.CharField()
+    price = models.CharField()
+    text = models.CharField()
     fine_status = models.TextField()  # This field type is a guess.
 
     class Meta:
