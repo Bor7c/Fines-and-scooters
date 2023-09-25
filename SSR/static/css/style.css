@@ -191,7 +191,7 @@ body .container .card {
   position: relative;
   min-width: 320px;
   height: 440px;
-  box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.2),
+  box-shadow: inset 5px 5px 5px rgba(0, 0, 0, 0.5),
     inset -5px -5px 15px rgba(255, 255, 255, 0.1),
     5px 5px 15px rgba(0, 0, 0, 0.3), -5px -5px 15px rgba(255, 255, 255, 0.1);
   border-radius: 15px;
@@ -206,13 +206,22 @@ body .container .card .box {
   left: 20px;
   right: 20px;
   bottom: 20px;
-  background: #2a2b2f;
+  background: #272727e7;
   border-radius: 15px;
   display: flex;
   justify-content: center;
   align-items: center;
   overflow: hidden;
   transition: 0.5s;
+}
+
+.background-img{
+  border-radius: 15px;
+  width: 320px;
+  height: 440px;
+  background: rgba(0, 0, 0, 0.5);
+  background-size: contain;
+  /* background-repeat: no-repeat; */
 }
 
 body .container .card .box:hover {
@@ -226,7 +235,7 @@ body .container .card .box:before {
   left: 0;
   width: 50%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.5);
 }
 
 body .container .card .box .content {

@@ -10,7 +10,7 @@ def GetOrders(request):
     try:
         input_text = request.GET['text']
         if input_text:
-            current_orders = [order for order in models.Fines.objects.filter(fine_status='действует') if input_text.lower() in order.title.lower() or input_text.lower() in order.price.lower()]
+            current_orders = models.Fines.objects.filter(fine_status='действует',title__icontains=input_text)
             return render(request, 'orders.html', {'data' : {
                 'orders': current_orders,
                 'search_v': input_text,
@@ -29,8 +29,7 @@ def GetOrder(request, id):
 
 
 def Click_on_HideCard(request, id):
-    if not HideCard(id):
-        pass
+    HideCard(id)
     return redirect(reverse('order_url'))
 
 

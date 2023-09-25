@@ -81,9 +81,11 @@ class Breaches(models.Model):
     breach_id = models.BigAutoField(primary_key=True)
     user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
     breach_date = models.DateField(blank=True, null=True)
-    review_date = models.DateField(blank=True, null=True)
-    finish_date = models.DateField(blank=True, null=True)
+    created_date = models.DateField(blank=True, null=True)
+    formated_date = models.DateField(blank=True, null=True)
     breach_status = models.TextField()  # This field type is a guess.
+    moder_id = models.IntegerField(blank=True, null=True)
+    confirmed_date = models.DateField(blank=True, null=True)
 
     class Meta:
         managed = False
@@ -91,13 +93,13 @@ class Breaches(models.Model):
 
 
 class ConfOfFines(models.Model):
-    fine = models.ForeignKey('Fines', models.DO_NOTHING, db_column='fine_ID', blank=True, null=True)  # Field name made lowercase.
-    breach = models.ForeignKey(Breaches, models.DO_NOTHING, db_column='breach_ID', blank=True, null=True)  # Field name made lowercase.
-    conf_id = models.BigIntegerField(db_column='conf_ID', primary_key=True)  # Field name made lowercase.
+    fine = models.OneToOneField('Fines', models.DO_NOTHING, primary_key=True)  # The composite primary key (fine_id, breach_id) found, that is not supported. The first column is selected.
+    breach = models.ForeignKey(Breaches, models.DO_NOTHING)
 
     class Meta:
         managed = False
         db_table = 'conf_of_fines'
+        unique_together = (('fine', 'breach'),)
 
 
 class DjangoAdminLog(models.Model):
@@ -149,7 +151,7 @@ class Fines(models.Model):
     fine_id = models.AutoField(primary_key=True)
     picture_url = models.CharField()
     title = models.CharField()
-    price = models.CharField()
+    price = models.CharField(blank=True, null=True)
     text = models.CharField()
     fine_status = models.TextField()  # This field type is a guess.
 
@@ -159,10 +161,11 @@ class Fines(models.Model):
 
 
 class Users(models.Model):
-    user_id = models.BigIntegerField(db_column='User_ID', primary_key=True)  # Field name made lowercase.
+    user_id = models.BigIntegerField(primary_key=True)
     name = models.CharField(blank=True, null=True)
     password = models.CharField(blank=True, null=True)
-    contact = models.CharField(blank=True, null=True)
+    contacts = models.CharField(blank=True, null=True)
+    admin_pass = models.BooleanField(blank=True, null=True)
 
     class Meta:
         managed = False
