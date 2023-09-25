@@ -24,5 +24,4 @@ urlpatterns = [
     path('', views.GetOrders, name='order_url'),
     path('order/<int:id>/', views.GetOrder, name='order_url'),
     path('update/<int:id>/', views.Click_on_HideCard, name='HideCard_url'),
-
 ]
