@@ -280,7 +280,7 @@ body .container .card .box .content a:hover {
   color: #000;
 } 
 
-
+/*Стиль поиска*/
 form{
   margin-top: 10px;
   margin-left: 190px;
@@ -328,6 +328,12 @@ input{
   transition: all 1s;
 }
 
+.fa-search{
+  background: #b3b3b3;
+  border-color: #b3b3b3;
+  border-radius: 50%;
+}
+
 form:hover,
 form:valid{
   width: 200px;
@@ -339,7 +345,7 @@ form:valid input{
   display: block;
 }
 
-form:hover .fa,
+form:hover,
 form:valid .fa{
   background: #b3b3b3;
   color: #970000;

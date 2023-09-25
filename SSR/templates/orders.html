@@ -9,10 +9,11 @@
 
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
 
-<form method="GET" enctype="multipart/form-data">
+<form  action="{% url 'order_url' %}" method="get">
   <input class="input_text" name="text" type="search" required value="{{data.search_v}}">
-  <i class="fa fa-search" name="search"></i>
+    <button class="fa fa-search" name="search"></button>
 </form>
+
 
 
 <div class="container">
