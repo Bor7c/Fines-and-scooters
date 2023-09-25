@@ -206,7 +206,7 @@ body .container .card .box {
   left: 20px;
   right: 20px;
   bottom: 20px;
-  background: #272727e7;
+  background: #272727ab;
   border-radius: 15px;
   display: flex;
   justify-content: center;
@@ -219,9 +219,17 @@ body .container .card .box {
   border-radius: 15px;
   width: 320px;
   height: 440px;
-  background: rgba(0, 0, 0, 0.5);
+  background-color: #fcfcfc;
   background-size: contain;
-  /* background-repeat: no-repeat; */
+  background-repeat: no-repeat;
+}
+
+.background-img-black{
+  border-radius: 15px;
+  width: 320px;
+  height: 440px;
+  background-color: #00000093;
+  background-size: contain;
 }
 
 body .container .card .box:hover {
@@ -235,7 +243,7 @@ body .container .card .box:before {
   left: 0;
   width: 50%;
   height: 100%;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 254, 254, 0.5);
 }
 
 body .container .card .box .content {
@@ -250,7 +258,7 @@ body .container .card .box .content h2 {
   top: 20px;
   right: 10px;
   font-size: 4rem;
-  color: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.288);
 }
 
 body .container .card .box .content h3 {
@@ -427,10 +435,10 @@ form:valid .fa{
   height: 450px;
 }    
 .cl-btn-1 div {
-  width: 80px;
-  height: 80px;
+  width: 81px;
+  height: 81px;
   position: absolute;
-  background: #b3b3b3;
+  background: #dadada9a;
   border-radius: 30%;
   transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
   border: 6px solid #970000;
