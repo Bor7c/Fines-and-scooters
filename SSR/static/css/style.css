@@ -306,7 +306,7 @@ body .container .card .box .content a:hover {
 } 
 
 /*Стиль поиска*/
-form{
+.form-s{
   margin-top: 10px;
   margin-left: 190px;
   top: 50%;
@@ -359,19 +359,19 @@ input{
   border-radius: 50%;
 }
 
-form:hover,
-form:valid{
+.form-s:hover,
+.form-s:valid{
   width: 200px;
   cursor: pointer;
 }
 
-form:hover input,
-form:valid input{
+.form-s:hover input,
+.form-s:valid input{
   display: block;
 }
 
-form:hover,
-form:valid .fa{
+.form-s:hover,
+.form-s:valid .fa{
   background: #b3b3b3;
   color: #970000;
 }
@@ -430,7 +430,21 @@ form:valid .fa{
 
 
 
-
+.cl-btn{
+  margin-top: none;
+  margin-left: none;
+  top: none;
+  left: none;
+  transform: none;
+  transition: none;
+  width: none;
+  height: none;
+  background: none;
+  box-sizing: none;
+  border-radius: none;
+  border: none;
+  padding: none;
+}
 
 
 
