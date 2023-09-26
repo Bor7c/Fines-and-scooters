@@ -185,6 +185,7 @@ body .container {
   flex-wrap: wrap;
   max-width: 1200px;
   margin: 10px 0;
+  margin-left: 7%;
 }
 
 body .container .card {
@@ -389,6 +390,7 @@ input{
 .line{
   width: 1100px;
   margin-top: 20px;
+  margin-left: 6.5%;
 }
 
 
@@ -419,7 +421,7 @@ input{
 	padding: 1rem 0 0 4.5rem;
 	text-shadow: .022em .022em .022em #111;
 	color: #fff;
-  margin-left: 100px;
+  margin-left: 7%;
   margin-bottom: 70px;
   margin-top: 20px;
 }
@@ -455,6 +457,8 @@ input{
   display: flex;
   justify-content: center;
   height: 450px;
+  background-color: #ffffff00;
+  border-width: 0px;
 }    
 .cl-btn-1 div {
   width: 78px;
