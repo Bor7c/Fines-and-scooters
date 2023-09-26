@@ -17,11 +17,11 @@
 
 
 <div class="container">
-    {% for order in data.orders %}
- 
+  {% for order in data.orders %}
   <div class="card">
-    <div class="background-img"style="background-image: url({{order.picture_url}});">
-      <div class="background-img-black">
+    <div class="background-img-white">
+      <div class="background-img"style="background-image: url({{order.picture_url}});">
+        <div class="background-img-black">
           <div class="box">
                 <a action="{% url 'HideCard_url' order.fine_id %}" method="POST">
                   <div class="cl-btn-1">
@@ -37,17 +37,17 @@
                     </div>
                   </div>
                 </a>
-                <div class="content">
-                  <h2>{{order.price}}₽</h2>
-                  <h3>{{order.title}}</h3>
-                  <h3><div><a href="{% url 'order_url' order.fine_id %}">Подробнее</a> </div></h3>
-              </div>
-            </div>
+                  <div class="content">
+                        <h2>{{order.price}}₽</h2>
+                        <h3>{{order.title}}</h3>
+                        <h3><div><a href="{% url 'order_url' order.fine_id %}">Подробнее</a> </div></h3>
+                  </div>
           </div>
+        </div>
       </div>
     </div>
-    {% endfor %}
   </div>
+  {% endfor %}
 </div>
 
 
