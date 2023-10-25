@@ -85,7 +85,7 @@ def fine_action(request, pk, format=None):
         Удаляет штраф
         """    
         Fine = get_object_or_404(Fines, fine_id=pk)
-        Fine.fine_status = request.data['fine_status']
+        Fine.fine_status = 'удалён'
         Fine.save()
         serializer = FinesSerializer(Fine)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)

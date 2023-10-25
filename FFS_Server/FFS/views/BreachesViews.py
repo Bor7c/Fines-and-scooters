@@ -43,7 +43,7 @@ def breaches_action(request, format=None):
         WideBreach = BreachSerializer.data
         for i, wb in enumerate(BreachSerializer.data):
             User = get_object_or_404(Users, user_id=wb.get('user'))     
-            WideBreach[i]['login'] = User.login                         
+            WideBreach[i]['User_login'] = User.login                         
         return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
     
     elif request.method == 'PUT':
@@ -93,6 +93,8 @@ def breach_action(request, pk, format=None):
         FineListSerializer = PositionSerializer(positions, many=True)
 
         WideBreach = BreachSerializer.data
+
+        WideBreach['User_login'] = Users.objects.get(user_id=WideBreach['user']).login
         WideBreach['Fines_list'] = getFineForOneBreach(FineListSerializer)
         return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
     
