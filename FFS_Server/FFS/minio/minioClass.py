@@ -3,6 +3,7 @@ from minio.error import S3Error
 from io import BytesIO
 from base64 import b64encode, b64decode
 import os
+import requests
 
 
 from minio import Minio
@@ -39,12 +40,13 @@ class MinioClass:
         except Exception as e:
             print("unexpected error: ", e)
 
-    def addImage(self, username: str, image_id: str, image_base64: str, image_extension: str):
+    def addImage(self, bucket: str, title: str, image_url: str):
         try:
-            image_data = b64decode(image_base64)
+            image = requests.get(image_url)
+            image_data = b64decode(image)
             image_stream = BytesIO(image_data)
-            self.client.put_object(bucket_name=username,
-                                   object_name=f"{image_id}.{image_extension}",
+            self.client.put_object(bucket_name=bucket,
+                                   object_name=f"{title}.png",
                                    data=image_stream,
                                    length=len(image_data))
         except S3Error as e:
@@ -52,10 +54,10 @@ class MinioClass:
         except Exception as e:
             print("unexpected error: ", e)
 
-    def getImage(self, username: str, image_id: str, image_extension: str):
+    def getImage(self, bucket: str, fine_title: str):
         try:
-            result = self.client.get_object(bucket_name=username,
-                                            object_name=f"{image_id}.{image_extension}")
+            result = self.client.get_object(bucket_name=bucket,
+                                            object_name=f"{fine_title}.png")
             # print (b64encode(BytesIO(result.data).read()).decode())
             return b64encode(BytesIO(result.data).read()).decode()
         except S3Error as e:
@@ -81,5 +83,6 @@ class MinioClass:
 
 
 
-# DB = MinioClass()
+DB = MinioClass()
 # DB.getImage('fines', '1', 'png')
+DB.addImage('fines','ABOBA','https://nadrovahdon.ru/wp-content/uploads/2023/05/Фон-баннер-пиво.jpg')

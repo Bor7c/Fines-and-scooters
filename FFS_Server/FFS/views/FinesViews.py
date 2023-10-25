@@ -16,17 +16,17 @@ from datetime import datetime
 def getFineWithImage(serializer: FinesSerializer):
     minio = MinioClass()
     FineData = serializer.data
-    FineData.update({'image': minio.getImage('fines', serializer.data['fine_id'], serializer.data['picture'])})
+    FineData.update({'image': minio.getImage('fines', serializer.data['title'])})
     return FineData
 
 def postFineImage(request, serializer: FinesSerializer):
     minio = MinioClass()
-    minio.addImage('fines', serializer.data['fine_id'], request.data['image'], serializer.data['picture'])
+    minio.addImage('fines', request.data['title'], serializer.data['picture_url'])
 
 def putFineImage(request, serializer: FinesSerializer):
     minio = MinioClass()
-    minio.removeImage('fines', serializer.data['fine_id'], serializer.data['picture'])
-    minio.addImage('fines', serializer.data['fine_id'], request.data['image'], serializer.data['picture'])
+    minio.removeImage('fines', serializer.data['title'], serializer.data['picture'])
+    minio.addImage('fines', serializer.data['title'], request.data['title'], serializer.data['picture'])
 
 
 
@@ -74,22 +74,6 @@ def fine_action(request, pk, format=None):
         Fine = get_object_or_404(Fines, fine_id=pk)
         serializer = FinesSerializer(Fine)
         return Response(getFineWithImage(serializer), status=status.HTTP_202_ACCEPTED)     
-       
-    # elif request.method == 'PUT':
-    #     """
-    #     Обновляет информацию о штрафе
-    #     """
-    #     fields = request.data
-    #     if request.data.get('fine_status'):
-    #         return Response(status=status.HTTP_400_BAD_REQUEST)
-    #     Fine = get_object_or_404(Fines, fine_id=pk)
-    #     serializer = FinesSerializer(Fine, data=request.data, partial=True)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         if 'image' in fields:
-    #             putFineImage(request, serializer)
-    #         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     elif request.method == 'DELETE':
         """
