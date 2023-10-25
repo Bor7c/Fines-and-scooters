@@ -37,9 +37,20 @@ def fines_action(request, format=None):
         """
         Возвращает список штрафов
         """
+        userId = GetUser()
+        TrueBreach = Breaches.objects.filter(user_id = userId).filter(breach_status = 'черновик') 
+        if TrueBreach.exists():
+            BreachId = TrueBreach[0].breach_id
+        else:
+            BreachId = 'null'
+        List = {
+            'breach_id': BreachId
+        }
         FinesList = FinesFilter(Fines.objects.filter(fine_status='действует'),request)
         FinesListData = [getFineWithImage(FinesSerializer(fine)) for fine in FinesList]
-        return Response(FinesListData)
+        List['fines'] = FinesListData
+        return Response(List)
+    
     elif request.method == 'POST':
         """
         Добавляет новый штраф
