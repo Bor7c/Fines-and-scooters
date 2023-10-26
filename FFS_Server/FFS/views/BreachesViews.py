@@ -68,7 +68,7 @@ def breaches_action(request, format=None):
         """
         userId = GetUser()
         User = Users.objects.get(user_id=userId)
-        Breach = Breaches.objects.filter(user_id = userId).filter(breach_status = 'черновик') 
+        Breach = Breaches.objects.filter(user = userId).filter(breach_status = 'черновик') 
         if len(Breach) > 0:
             BreachId = Breach[0].breach_id
         CoF = ConfOfFines.objects.filter(breach=BreachId)

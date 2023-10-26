@@ -25,8 +25,8 @@ def postFineImage(request, serializer: FinesSerializer):
 
 def putFineImage(request, serializer: FinesSerializer):
     minio = MinioClass()
-    minio.removeImage('fines', serializer.data['title'], serializer.data['picture'])
-    minio.addImage('fines', serializer.data['title'], request.data['title'], serializer.data['picture'])
+    minio.removeImage('fines', serializer.data['title'])
+    minio.addImage('fines', serializer.data['title'], request.data['title'], serializer.data['picture_url'])
 
 
 
@@ -91,7 +91,6 @@ def fine_action(request, pk, format=None):
         """ 
         userId = GetUser()
         TrueBreach = Breaches.objects.filter(user_id = userId).filter(breach_status = 'черновик') 
-        BreachId = TrueBreach[0].breach_id
         if not TrueBreach.exists():
             Breach = {
                 'user': userId,
@@ -103,6 +102,9 @@ def fine_action(request, pk, format=None):
                 return Response(BreachSerializer.errors, status=status.HTTP_400_BAD_REQUEST)
             BreachSerializer.save()
     
+
+        TrueBreach2 = Breaches.objects.filter(user_id = userId).filter(breach_status = 'черновик') 
+        BreachId = TrueBreach2[0].breach_id
         if Breaches.objects.get(breach_id=BreachId).breach_status != 'черновик' or ConfOfFines.objects.filter(fine=pk).filter(breach=BreachId).exists():
             return Response({'error': 'Этот штраф уже добавлен'}, status=status.HTTP_400_BAD_REQUEST)
         

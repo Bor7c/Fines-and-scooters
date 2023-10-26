@@ -1,14 +1,10 @@
 from minio import Minio
 from minio.error import S3Error
 from io import BytesIO
-from base64 import b64encode, b64decode
+from base64 import *
 import os
-import requests
-
-
-from minio import Minio
-
-               # опциональный параметр, отвечающий за вкл/выкл защищенное TLS соединение
+import pip._vendor.requests as requests
+import io
 
 
 
@@ -42,13 +38,12 @@ class MinioClass:
 
     def addImage(self, bucket: str, title: str, image_url: str):
         try:
-            image = requests.get(image_url)
-            image_data = b64decode(image)
-            image_stream = BytesIO(image_data)
+            response = requests.get(image_url)
+            image_stream = io.BytesIO(response.content)
             self.client.put_object(bucket_name=bucket,
                                    object_name=f"{title}.png",
                                    data=image_stream,
-                                   length=len(image_data))
+                                   length=len(response.content))
         except S3Error as e:
             print("minio error occurred: ", e)
         except Exception as e:
@@ -65,10 +60,10 @@ class MinioClass:
         except Exception as e:
             print("unexpected error: ", e)
 
-    def removeImage(self, username: str, image_id: str, image_extension: str):
+    def removeImage(self, bucket: str, title: str):
         try:
-            self.client.remove_object(bucket_name=username,
-                                      object_name=f"{image_id}.{image_extension}")
+            self.client.remove_object(bucket_name=bucket,
+                                      object_name=f"{title}.png")
         except S3Error as e:
             print("minio error occurred: ", e)
         except Exception as e:
@@ -84,5 +79,8 @@ class MinioClass:
 
 
 DB = MinioClass()
-# DB.getImage('fines', '1', 'png')
-DB.addImage('fines','ABOBA','https://nadrovahdon.ru/wp-content/uploads/2023/05/Фон-баннер-пиво.jpg')
+# DB.addImage('fines','ABOBA','https://nadrovahdon.ru/wp-content/uploads/2023/05/Фон-баннер-пиво.jpg')
+# DB.getImage('fines', 'ABOBA')
+
+
+# DB.removeImage('fines', 'ABOBA')

@@ -7,7 +7,7 @@ class FinesSerializer(serializers.ModelSerializer):
         # Модель, которую мы сериализуем
         model = Fines
         # Поля, которые мы сериализуем
-        fields = ["fine_id", "picture", "title", "price", "text", "fine_status"]
+        fields = ["fine_id", "picture_url", "title", "price", "text", "fine_status"]
 
 class FinesInBreachSerializer(serializers.ModelSerializer):
     class Meta:
