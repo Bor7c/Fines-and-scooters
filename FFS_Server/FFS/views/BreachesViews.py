@@ -15,10 +15,10 @@ from ..minio.minioClass import *
 def checkStatus(old, new, admin):
     return ((not admin) and (new in ['сформирован', 'удалён']) and (old == 'черновик')) or (admin and (new in ['завершён', 'отклонён']) and (old == 'сформирован')) 
 
-def getFineWithImage(serializer: FinesSerializer, fine_id: int, picture: str):
+def getFineWithImage(serializer: FinesSerializer, title: int):
     minio = MinioClass()
     FineData = serializer.data
-    FineData.update({'image': minio.getImage('fines', fine_id, picture)})
+    FineData.update({'image': minio.getImage('fines', title)})
     return FineData
 
 def getFineForOneBreach(serializer: PositionSerializer):
@@ -26,7 +26,7 @@ def getFineForOneBreach(serializer: PositionSerializer):
     for fine in serializer.data:
         Fine = get_object_or_404(Fines, fine_id=fine['fine'])
         FineData = fine
-        FineData['Fine_data'] = getFineWithImage(FinesInBreachSerializer(Fine), Fine.fine_id, Fine.picture)
+        FineData['Fine_data'] = getFineWithImage(FinesInBreachSerializer(Fine), Fine.title)
         FinesList.append(FineData)
     return FinesList
 
@@ -98,18 +98,6 @@ def breach_action(request, pk, format=None):
         WideBreach['Fines_list'] = getFineForOneBreach(FineListSerializer)
         return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
     
-    elif request.method == 'PUT':
-        """
-        Изменяет нарушение
-        """
-        Breach = get_object_or_404(Breaches, breach_id=pk)
-        serializer = BreachesSerializer(Breach, data=request.data)
-        if 'status' in request.data.keys():
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
          
         
     

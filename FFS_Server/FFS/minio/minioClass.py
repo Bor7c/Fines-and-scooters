@@ -6,6 +6,7 @@ import os
 import pip._vendor.requests as requests
 import io
 
+# sudo minio server ~/minio --console-address :9090
 
 
 class MinioClass:
@@ -79,7 +80,7 @@ class MinioClass:
 
 
 DB = MinioClass()
-# DB.addImage('fines','ABOBA','https://nadrovahdon.ru/wp-content/uploads/2023/05/Фон-баннер-пиво.jpg')
+# DB.addImage('fines','ABOBA','https://polinka.top/uploads/posts/2023-06/1686249023_polinka-top-p-znak-svetofor-kartinka-instagram-32.png')
 # DB.getImage('fines', 'ABOBA')
 
 

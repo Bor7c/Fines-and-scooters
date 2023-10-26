@@ -19,14 +19,14 @@ def getFineWithImage(serializer: FinesSerializer):
     FineData.update({'image': minio.getImage('fines', serializer.data['title'])})
     return FineData
 
-def postFineImage(request, serializer: FinesSerializer):
+def postFineImage(serializer: FinesSerializer):
     minio = MinioClass()
-    minio.addImage('fines', request.data['title'], serializer.data['picture_url'])
+    minio.addImage('fines', serializer.data['title'], serializer.data['picture_url'])
 
-def putFineImage(request, serializer: FinesSerializer):
+def putFineImage(serializer: FinesSerializer, old_title):
     minio = MinioClass()
-    minio.removeImage('fines', serializer.data['title'])
-    minio.addImage('fines', serializer.data['title'], request.data['title'], serializer.data['picture_url'])
+    minio.removeImage('fines', old_title)
+    minio.addImage('fines', serializer.data['title'], serializer.data['picture_url'])
 
 
 
@@ -59,13 +59,13 @@ def fines_action(request, format=None):
         serializer = FinesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
-            postFineImage(request, serializer)
+            postFineImage(serializer)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 
-@api_view(['Get','Delete','Post'])
+@api_view(['Get','Put','Delete','Post'])
 def fine_action(request, pk, format=None):
     if request.method == 'GET':
         """
@@ -75,6 +75,22 @@ def fine_action(request, pk, format=None):
         serializer = FinesSerializer(Fine)
         return Response(getFineWithImage(serializer), status=status.HTTP_202_ACCEPTED)     
 
+
+    elif request.method == 'PUT':
+        """
+        Обновляет информацию о штрафе
+        """
+        if request.data.get('fine_status'):
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+        Fine = get_object_or_404(Fines, fine_id=pk)
+        old_title = Fine.title
+        serializer = FinesSerializer(Fine, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            putFineImage(serializer, old_title)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
     elif request.method == 'DELETE':
         """
         Удаляет штраф
