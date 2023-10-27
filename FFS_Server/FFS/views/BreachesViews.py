@@ -25,9 +25,10 @@ def getFineForOneBreach(serializer: PositionSerializer):
     FinesList = []
     for fine in serializer.data:
         Fine = get_object_or_404(Fines, fine_id=fine['fine'])
-        FineData = fine
-        FineData['Fine_data'] = getFineWithImage(FinesInBreachSerializer(Fine), Fine.title)
-        FinesList.append(FineData)
+        if Fine.fine_status == 'действует':
+            FineData = fine
+            FineData['Fine_data'] = getFineWithImage(FinesInBreachSerializer(Fine), Fine.title)
+            FinesList.append(FineData)
     return FinesList
 
 
