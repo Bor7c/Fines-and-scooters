@@ -55,7 +55,10 @@ def fines_action(request, format=None):
         """
         Добавляет новый штраф
         """
-        print('post')
+        Fine = Fines.objects.filter(title=request.data['title'])
+        if Fine.exists():
+            return Response('Такой штраф уже существует', status=status.HTTP_400_BAD_REQUEST)
+
         serializer = FinesSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
