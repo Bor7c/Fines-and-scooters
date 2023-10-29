@@ -5,6 +5,7 @@ from base64 import *
 import os
 import pip._vendor.requests as requests
 import io
+from datetime import timedelta
 
 # sudo minio server ~/minio --console-address :9090
 
@@ -52,10 +53,14 @@ class MinioClass:
 
     def getImage(self, bucket: str, fine_title: str):
         try:
-            result = self.client.get_object(bucket_name=bucket,
-                                            object_name=f"{fine_title}.png")
-            # print (b64encode(BytesIO(result.data).read()).decode())
-            return b64encode(BytesIO(result.data).read()).decode()
+            result = self.client.get_presigned_url(
+                method='GET',
+                bucket_name=bucket,
+                object_name=f"{fine_title}.png",
+                expires=timedelta(minutes=1),
+                )
+            # print (result)
+            return result
         except S3Error as e:
             print("minio error occurred: ", e)
         except Exception as e:
@@ -81,7 +86,7 @@ class MinioClass:
 
 DB = MinioClass()
 # DB.addImage('fines','ABOBA','https://polinka.top/uploads/posts/2023-06/1686249023_polinka-top-p-znak-svetofor-kartinka-instagram-32.png')
-# DB.getImage('fines', 'ABOBA')
+DB.getImage('fines', 'ABOBA')
 
 
 # DB.removeImage('fines', 'ABOBA')
