@@ -15,7 +15,7 @@ class Breaches(models.Model):
 class Fines(models.Model):
     fine_id = models.AutoField(primary_key=True)
     picture_url = models.CharField(blank=True, null=True)
-    title = models.CharField(blank=True, null=True, max_length=50, unique=True)
+    title = models.CharField(blank=True, null=True, max_length=70, unique=True)
     price = models.CharField(blank=True, null=True)
     text = models.CharField(blank=True, null=True)
     fine_status = models.CharField(default='действует', max_length=15)  # This field type is a guess.
