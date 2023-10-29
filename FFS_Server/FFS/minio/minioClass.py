@@ -84,9 +84,9 @@ class MinioClass:
 
 
 
-DB = MinioClass()
+# DB = MinioClass()
 # DB.addImage('fines','ABOBA','https://polinka.top/uploads/posts/2023-06/1686249023_polinka-top-p-znak-svetofor-kartinka-instagram-32.png')
-DB.getImage('fines', 'ABOBA')
+# DB.getImage('fines', 'ABOBA')
 
 
 # DB.removeImage('fines', 'ABOBA')
