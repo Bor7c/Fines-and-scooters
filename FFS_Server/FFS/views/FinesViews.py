@@ -85,8 +85,10 @@ def fine_action(request, pk, format=None):
         """
         if request.data.get('fine_status'):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
+        
         Fine = get_object_or_404(Fines, fine_id=pk)
         old_title = Fine.title
+        
         serializer = FinesSerializer(Fine, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()

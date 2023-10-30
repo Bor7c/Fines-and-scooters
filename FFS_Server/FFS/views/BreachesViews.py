@@ -15,7 +15,7 @@ from ..minio.minioClass import *
 def checkStatus(old, new, admin):
     return ((not admin) and (new in ['сформирован', 'удалён']) and (old == 'черновик')) or (admin and (new in ['завершён', 'отклонён']) and (old == 'сформирован')) 
 
-def getFineWithImage(serializer: FinesSerializer, title: int):
+def getFineWithImage(serializer: FinesSerializer, title: str):
     minio = MinioClass()
     FineData = serializer.data
     FineData.update({'image': minio.getImage('fines', title)})
