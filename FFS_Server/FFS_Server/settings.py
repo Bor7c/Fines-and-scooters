@@ -30,16 +30,19 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+
+
 INSTALLED_APPS = [
+    'django.contrib.staticfiles',  #Необходим для  swagger ui's css/js файлов (По умолчанию включен)
+    'drf_yasg',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'django.contrib.staticfiles',
     'rest_framework',
     'FFS',
-    'corsheaders'
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +61,7 @@ ROOT_URLCONF = 'FFS_Server.urls'
 
 CORS_ALLOWED_ORIGINS = [
     # Frontend
-    
+
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     # Backend
@@ -166,6 +169,8 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
 
 
 

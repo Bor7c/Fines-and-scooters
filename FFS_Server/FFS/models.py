@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 
 class Breaches(models.Model):
@@ -29,11 +30,21 @@ class ConfOfFines(models.Model):
     class Meta:
         unique_together = (('fine', 'breach'),)
 
-class Users(models.Model):
+class Users(AbstractBaseUser):
+    
     user_id = models.AutoField(primary_key=True)
-    name = models.CharField(blank=True, null=True)
-    login = models.CharField(blank=True, null=True, unique=True)
-    password = models.CharField(blank=True, null=True)
+    login = models.CharField(max_length=255, unique=True, verbose_name="Логин")
+    password = models.CharField(max_length=255, verbose_name="Пароль")
     contacts = models.CharField(blank=True, null=True)
     admin_pass = models.BooleanField(blank=True, null=True, default=False)
+    
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+
+    is_staff = models.BooleanField(default=False, verbose_name="Является ли пользователь менеджером?")
+    is_superuser = models.BooleanField(default=False, verbose_name="Является ли пользователь админом?")
+
+    def str(self):
+        return self.username
+    
 
