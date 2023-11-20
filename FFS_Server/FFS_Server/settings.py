@@ -30,6 +30,9 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
+REDIS_HOST = '0.0.0.0'
+REDIS_PORT = 6379
+
 
 
 INSTALLED_APPS = [

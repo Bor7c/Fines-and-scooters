@@ -1,5 +1,8 @@
 from .models import *
 from rest_framework import serializers
+from rest_framework.serializers import ModelSerializer
+
+from collections import OrderedDict
 
 
 class FinesSerializer(serializers.ModelSerializer):
@@ -45,24 +48,11 @@ class PositionSerializer(serializers.ModelSerializer):
 
 
 
+class UserSerializer(ModelSerializer):
+    admin_pass = serializers.BooleanField(default=False, required=False)
+    is_staff = serializers.BooleanField(default=False, required=False)
+    is_superuser = serializers.BooleanField(default=False, required=False)
 
-class UserRegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Users
-        fields = ['user_id', 'login', 'password', 'contacts', 'admin_pass']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
-
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        instance = self.Meta.model(**validated_data)
-        if password is not None:
-            instance.set_password(password)
-        instance.save()
-        return instance
-
-
-class UserAuthorizationSerializer(serializers.Serializer):
-    username = serializers.EmailField(required=True)
-    password = serializers.CharField(required=True)
+        fields = ["user_id", "login", "password", "contacts", "admin_pass", "is_staff", "is_superuser"]

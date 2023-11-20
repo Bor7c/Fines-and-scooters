@@ -5,21 +5,21 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAdmin, IsModerator
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from drf_yasg.utils import swagger_auto_schema
 
 
 import uuid
-import redis
-from BACKEND.settings import REDIS_HOST, REDIS_PORT
+from ...FFS_Server.settings import REDIS_HOST, REDIS_PORT
 
+import redis
+session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 
 from ..serializers import *
 from ..models import *
 from rest_framework.decorators import api_view
 from ..filters import *
-from datetime import datetime
 from .GetUser import *
 
 
@@ -28,9 +28,9 @@ class UserViewSet(ModelViewSet):
     """Класс, описывающий методы работы с пользователями
     Осуществляет связь с таблицей пользователей в базе данных
     """
-    queryset = User.objects.all()
+    queryset = Users.objects.all()
     serializer_class = UserSerializer
-    model_class = User
+    model_class = Users
 
     def get_permissions(self):
         if self.action in ['create']:
