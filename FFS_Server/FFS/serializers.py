@@ -33,12 +33,6 @@ class ConfOfFinesSerializer(serializers.ModelSerializer):
         # Поля, которые мы сериализуем
         fields = ["cofid", "fine", "breach", "fine_desc"]   
 
-class UsersSerializer(serializers.ModelSerializer):
-    class Meta:
-        # Модель, которую мы сериализуем
-        model = Users
-        # Поля, которые мы сериализуем
-        fields = ["user_id", "login", "password", "contacts", "admin_pass"] 
 
 class PositionSerializer(serializers.ModelSerializer):
     class Meta:
@@ -55,4 +49,4 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = Users
-        fields = ["user_id", "login", "password", "contacts", "admin_pass", "is_staff", "is_superuser"]
+        fields = ["user_id", "login", "password", "admin_pass", "is_staff", "is_superuser"]

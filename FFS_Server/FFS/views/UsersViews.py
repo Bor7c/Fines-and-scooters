@@ -5,15 +5,15 @@ from django.views.decorators.csrf import csrf_exempt
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.permissions import AllowAny, IsAdmin, IsModerator
+from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
-from drf_yasg.utils import swagger_auto_schema
+from drf_yasg.utils import swagger_auto_schema # type: ignore
 
 
 import uuid
-from ...FFS_Server.settings import REDIS_HOST, REDIS_PORT
+from FFS_Server.settings import REDIS_HOST, REDIS_PORT
 
-import redis
+import redis # type: ignore
 session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 
 from ..serializers import *
@@ -21,6 +21,7 @@ from ..models import *
 from rest_framework.decorators import api_view
 from ..filters import *
 from .GetUser import *
+from ..permissions import *
 
 
 
@@ -46,15 +47,15 @@ class UserViewSet(ModelViewSet):
         Функция регистрации новых пользователей
         Если пользователя c указанным в request username ещё нет, в БД будет добавлен новый пользователь.
         """
-        if self.model_class.objects.filter(username=request.data['username']).exists():
+        if self.model_class.objects.filter(login=request.data['login']).exists():
             return Response({'status': 'Exist'}, status=400)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            self.model_class.objects.create_user(username=serializer.data['username'],
+            self.model_class.objects.create_user(login=serializer.data['login'],
                                      password=serializer.data['password'],
                                      is_superuser=serializer.data['is_superuser'],
                                      is_staff=serializer.data['is_staff'],
-                                     is_moderator=serializer.data['is_moderator'])
+                                     admin_pass=serializer.data['admin_pass'])
             return Response({'status': 'Success'}, status=200)
         return Response({'status': 'Error', 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -65,12 +66,12 @@ class UserViewSet(ModelViewSet):
 @swagger_auto_schema(method='post', request_body=UserSerializer)
 @api_view(['Post'])
 def login_view(request):
-    username = request.data["username"]
+    login = request.data["login"]
     password = request.data["password"]
-    user = authenticate(request, username=username, password=password)
+    user = authenticate(request, login=login, password=password)
     if user is not None:
         random_key = str(uuid.uuid4())
-        session_storage.set(random_key, username)
+        session_storage.set(random_key, login)
 
         response = HttpResponse("{'status': 'ok'}")
         response.set_cookie("session_id", random_key)

@@ -1,5 +1,16 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+
+
+class NewUserManager(UserManager):
+    def create_user(self, login, password=None, **extra_fields):
+        if not login:
+            raise ValueError('User must have a login')
+        
+        user: Users = self.model(login=login, **extra_fields) 
+        user.set_password(password)
+        user.save(using=self.db)
+        return user
 
 
 class Breaches(models.Model):
@@ -31,20 +42,18 @@ class ConfOfFines(models.Model):
         unique_together = (('fine', 'breach'),)
 
 class Users(AbstractBaseUser):
-    
+    objects = NewUserManager()
+
     user_id = models.AutoField(primary_key=True)
     login = models.CharField(max_length=255, unique=True, verbose_name="Логин")
     password = models.CharField(max_length=255, verbose_name="Пароль")
-    contacts = models.CharField(blank=True, null=True)
     admin_pass = models.BooleanField(blank=True, null=True, default=False)
-    
-    USERNAME_FIELD = 'username'
-    REQUIRED_FIELDS = []
-
     is_staff = models.BooleanField(default=False, verbose_name="Является ли пользователь менеджером?")
     is_superuser = models.BooleanField(default=False, verbose_name="Является ли пользователь админом?")
+    
+    USERNAME_FIELD = 'login'
 
-    def str(self):
-        return self.username
+
+
     
 
