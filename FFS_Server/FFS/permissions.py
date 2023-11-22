@@ -16,7 +16,7 @@ class IsModerator(BasePermission):
         except:
             return False
         
-        user = Users.objects.get(login=session_storage.get(ssid).decode('utf-8'))
+        user = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8'))
         return user.admin_pass or user.is_superuser
 
 class IsAdmin(BasePermission):

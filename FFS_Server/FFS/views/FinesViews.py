@@ -10,6 +10,15 @@ from .GetUser import *
 from ..minio.minioClass import *
 from datetime import datetime
 
+from ..permissions import *
+from rest_framework.decorators import permission_classes, authentication_classes, api_view
+from rest_framework.views import APIView
+from rest_framework.permissions import *
+from FFS_Server.settings import REDIS_HOST, REDIS_PORT
+from drf_yasg.utils import swagger_auto_schema # type: ignore
+import redis # type: ignore
+session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
+
 
 # Create your views here.
 
@@ -29,15 +38,21 @@ def putFineImage(serializer: FinesSerializer, old_title):
     minio.addImage('fines', serializer.data['title'], serializer.data['picture_url'])
 
 
+class Fines_View(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-
-@api_view(['Get','Post'])
-def fines_action(request, format=None):
-    if request.method == 'GET':
+    # получение списка продуктов
+    # можно всем
+    def get(self, request, format=None):
         """
         Возвращает список штрафов
         """
-        userId = GetUser()
+        try:
+            ssid = request.COOKIES["session_id"]
+        except:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
         TrueBreach = Breaches.objects.filter(user_id = userId).filter(breach_status = 'черновик') 
         if TrueBreach.exists():
             BreachId = TrueBreach[0].breach_id
@@ -51,7 +66,12 @@ def fines_action(request, format=None):
         List['fines'] = FinesListData
         return Response(List)
     
-    elif request.method == 'POST':
+    
+    # добавление штрафа
+    # можно только если авторизован и модератор
+    @method_permission_classes((IsModerator,))
+    @swagger_auto_schema(request_body=FinesSerializer)
+    def post(self, request, format=None):
         """
         Добавляет новый штраф
         """
@@ -68,18 +88,25 @@ def fines_action(request, format=None):
 
 
 
-@api_view(['Get','Put','Delete','Post'])
-def fine_action(request, pk, format=None):
-    if request.method == 'GET':
+class Fine_View(APIView):
+    # authentication_classes = [SessionAuthentication, BasicAuthentication]
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    # получение штрафа
+    # можно всем
+    def get(self, request, pk, format=None):
         """
         Возвращает один штраф
         """
         Fine = get_object_or_404(Fines, fine_id=pk)
         serializer = FinesSerializer(Fine)
         return Response(getFineWithImage(serializer), status=status.HTTP_202_ACCEPTED)     
-
-
-    elif request.method == 'PUT':
+    
+    # изменение штрафа
+    # можно только если авторизован и модератор
+    @method_permission_classes((IsModerator,))
+    @swagger_auto_schema(request_body=FinesSerializer)
+    def put(self, request, pk, format=None):
         """
         Обновляет информацию о штрафе
         """
@@ -96,7 +123,10 @@ def fine_action(request, pk, format=None):
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == 'DELETE':
+    # логическое удаление штрафа
+    # можно только если авторизован и модератор
+    @method_permission_classes((IsModerator,))
+    def delete(self, request, pk, format=None):
         """
         Удаляет штраф
         """    
@@ -105,12 +135,19 @@ def fine_action(request, pk, format=None):
         Fine.save()
         serializer = FinesSerializer(Fine)
         return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-    
-    elif request.method == 'POST':
+
+    # добавление продукта в заказ
+    # можно только если авторизован
+    def post(self, request, pk, format=None):
         """
         Добавляет штраф в нарушение
         """ 
-        userId = GetUser()
+        try:
+            ssid = request.COOKIES["session_id"]
+        except:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
         TrueBreach = Breaches.objects.filter(user_id = userId).filter(breach_status = 'черновик') 
         if not TrueBreach.exists():
             Breach = {
@@ -140,3 +177,4 @@ def fine_action(request, pk, format=None):
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+

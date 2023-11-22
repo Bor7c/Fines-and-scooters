@@ -10,6 +10,17 @@ from datetime import datetime
 from .GetUser import *
 from ..minio.minioClass import *
 
+
+
+from ..permissions import *
+from rest_framework.decorators import permission_classes, authentication_classes, api_view
+from rest_framework.views import APIView
+from rest_framework.permissions import *
+from FFS_Server.settings import REDIS_HOST, REDIS_PORT
+from drf_yasg.utils import swagger_auto_schema # type: ignore
+import redis # type: ignore
+session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
+
 # Create your views here.
 
 def checkStatus(old, new, admin):
@@ -32,9 +43,12 @@ def getFineForOneBreach(serializer: PositionSerializer):
     return FinesList
 
 
-@api_view(['Get','Put','Delete'])
-def breaches_action(request, format=None):
-    if request.method == 'GET':
+class Breaches_View(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    # получение списка заказов
+    # можно только если авторизован
+    def get(self, request, format=None):
         """
         Возвращает список нарушений
         """
@@ -47,15 +61,23 @@ def breaches_action(request, format=None):
             WideBreach[i]['User_login'] = User.login                         
         return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
     
-    elif request.method == 'PUT':
+    # отправка заказа пользователем
+    # можно только если авторизован
+    @swagger_auto_schema(request_body=BreachesSerializer)
+    def put(self, request, format=None):
         """
         Формирует нарушение
         """
-        userId = GetUser()
+        try:
+            ssid = request.COOKIES["session_id"]
+        except:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
         User = get_object_or_404(Users, user_id=userId)
         Breach = get_object_or_404(Breaches, user=userId, breach_status='черновик')
         new_status = "сформирован"
-        if checkStatus(Breach.breach_status, new_status, User.admin_pass):
+        if checkStatus(Breach.breach_status, new_status, False):
             Breach.breach_status = new_status
             Breach.formated_date = datetime.now()
             Breach.save()
@@ -63,31 +85,48 @@ def breaches_action(request, format=None):
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
     
-    elif request.method == 'DELETE':
+    # удаление заказа пользователем
+    # можно только если авторизован
+    def delete(self, request, format=None):
         """
         Удаляет нарушение
         """
-        userId = GetUser()
+        try:
+            ssid = request.COOKIES["session_id"]
+        except:
+            return Response(status=status.HTTP_403_FORBIDDEN)
+
+        userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
         User = Users.objects.get(user_id=userId)
         Breach = Breaches.objects.filter(user = userId).filter(breach_status = 'черновик') 
         if len(Breach) > 0:
             BreachId = Breach[0].breach_id
         CoF = ConfOfFines.objects.filter(breach=BreachId)
-        if checkStatus(Breach[0].breach_status, "удалён", User.admin_pass):
+        if checkStatus(Breach[0].breach_status, "удалён", False):
             for true_CoF in CoF:
                 true_CoF.delete()
             Breach.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
     
 
-@api_view(['Get','Put'])
-def breach_action(request, pk, format=None):
-    if request.method == 'GET':
+
+
+
+
+class Breach_View(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
+
+    # получение нарушения
+    # можно получить нарушение  если авторизован
+    # если авторизован и модератор, то можно получить любой заказ
+    def get(self, request, pk, format=None):
         """
         Возвращает одно нарушение
         """
-        Breach = get_object_or_404(Breaches, breach_id=pk)
+        !!!
+        Breach = get_object_or_404(Breaches, breach_id=pk) 
         BreachSerializer = BreachesSerializer(Breach)
 
         positions = ConfOfFines.objects.filter(breach=pk)
@@ -99,26 +138,24 @@ def breach_action(request, pk, format=None):
         WideBreach['Fines_list'] = getFineForOneBreach(FineListSerializer)
         return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
     
-         
-        
-    
-
-@api_view(['Put'])
-def breach_final(request, pk, format=None):
+    # перевод заказа модератором на статус A или W
+    # можно только если авторизован и модератор
+    @method_permission_classes((IsModerator,))
+    @swagger_auto_schema(request_body=BreachesSerializer)
+    def put(self, request, pk, format=None):
         """
         Принимает или отклоняет нарушение
         """
-        userId = 2
-        User = get_object_or_404(Users, user_id=userId)
         Breach = get_object_or_404(Breaches, breach_id=pk)
         try: 
             new_status = request.data['breach_status']
         except:
             return Response(status=status.HTTP_400_BAD_REQUEST)
-        if checkStatus(Breach.breach_status, new_status, User.admin_pass):
+        if checkStatus(Breach.breach_status, new_status, True):
             Breach.breach_status = new_status
             Breach.closed_date = datetime.now()
             Breach.save()
             serializer = BreachesSerializer(Breach)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
+

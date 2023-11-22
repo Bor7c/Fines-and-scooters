@@ -45,17 +45,17 @@ class UserViewSet(ModelViewSet):
     def create(self, request):
         """
         Функция регистрации новых пользователей
-        Если пользователя c указанным в request username ещё нет, в БД будет добавлен новый пользователь.
+        Если пользователя c указанным в request Userlogin ещё нет, в БД будет добавлен новый пользователь.
         """
-        if self.model_class.objects.filter(login=request.data['login']).exists():
+        if self.model_class.objects.filter(Userlogin=request.data['Userlogin']).exists():
             return Response({'status': 'Exist'}, status=400)
         serializer = self.serializer_class(data=request.data)
         if serializer.is_valid():
-            self.model_class.objects.create_user(login=serializer.data['login'],
+            self.model_class.objects.create_user(Userlogin=serializer.data['Userlogin'],
                                      password=serializer.data['password'],
                                      is_superuser=serializer.data['is_superuser'],
                                      is_staff=serializer.data['is_staff'],
-                                     admin_pass=serializer.data['admin_pass'])
+                                     is_moderator=serializer.data['is_moderator'])
             return Response({'status': 'Success'}, status=200)
         return Response({'status': 'Error', 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -66,12 +66,12 @@ class UserViewSet(ModelViewSet):
 @swagger_auto_schema(method='post', request_body=UserSerializer)
 @api_view(['Post'])
 def login_view(request):
-    login = request.data["login"]
+    Userlogin = request.data["Userlogin"]
     password = request.data["password"]
-    user = authenticate(request, login=login, password=password)
+    user = authenticate(request, Userlogin=Userlogin, password=password)
     if user is not None:
         random_key = str(uuid.uuid4())
-        session_storage.set(random_key, login)
+        session_storage.set(random_key, Userlogin)
 
         response = HttpResponse("{'status': 'ok'}")
         response.set_cookie("session_id", random_key)
@@ -87,7 +87,7 @@ def login_view(request):
 @api_view(['Post'])
 def logout_view(request):
     try:
-            ssid = request.COOKIES["session_id"]
+        ssid = request.COOKIES["session_id"]
     except:
         return HttpResponse("{'status': 'error', 'error': 'logout failed'}")
         

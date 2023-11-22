@@ -11,7 +11,14 @@ from .GetUser import *
 # Create your views here.
 @api_view(['Put','Delete'])
 def Change_Fine(request, fine, format=None):
-    userId = GetUser()
+    try:
+        ssid = request.COOKIES["session_id"]
+    except:
+        return Response(status=status.HTTP_403_FORBIDDEN)
+
+    
+    userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
+    
     TrueBreach = Breaches.objects.filter(user=userId, breach_status='черновик')
     if TrueBreach.exists():
         BreachId = TrueBreach[0].breach_id

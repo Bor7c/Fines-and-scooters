@@ -45,13 +45,13 @@ class Users(AbstractBaseUser):
     objects = NewUserManager()
 
     user_id = models.AutoField(primary_key=True)
-    login = models.CharField(max_length=255, unique=True, verbose_name="Логин")
+    Userlogin = models.CharField(max_length=255, unique=True, verbose_name="Логин")
     password = models.CharField(max_length=255, verbose_name="Пароль")
     admin_pass = models.BooleanField(blank=True, null=True, default=False)
     is_staff = models.BooleanField(default=False, verbose_name="Является ли пользователь менеджером?")
     is_superuser = models.BooleanField(default=False, verbose_name="Является ли пользователь админом?")
     
-    USERNAME_FIELD = 'login'
+    USERNAME_FIELD = 'Userlogin'
 
 
 

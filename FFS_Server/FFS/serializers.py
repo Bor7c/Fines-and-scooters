@@ -49,4 +49,4 @@ class UserSerializer(ModelSerializer):
 
     class Meta:
         model = Users
-        fields = ["user_id", "login", "password", "admin_pass", "is_staff", "is_superuser"]
+        fields = ["user_id", "Userlogin", "password", "admin_pass", "is_staff", "is_superuser"]

@@ -56,12 +56,11 @@ urlpatterns = [
     path('accounts/login/', login_view, name='login'),
     path('accounts/logout/', logout_view, name='logout'),
 
-    path(r'fines/', fines_action, name='fines-list'),
-    path(r'fines/<int:pk>/', fine_action, name='fine-action'),
+    path(r'fines/', Fine_View.as_view(), name='fines-list'),
+    path(r'fines/<int:pk>/', Fine_View.as_view(), name='fine-action'),
 
-    path(r'breaches/', breaches_action, name='breaches-list'),
-    path(r'breaches/<int:pk>/', breach_action, name='breach-action'),
-    path(r'breaches/<int:pk>/end/', breach_final, name='breach-final'),
+    path(r'breaches/', Breaches_View.as_view(), name='breaches-list'),
+    path(r'breaches/<int:pk>/', Breach_View.as_view(), name='breach-action'),
 
     path(r'cof/<int:pk>/', Change_Fine, name='cof-action'),
 
