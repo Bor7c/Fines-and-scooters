@@ -10,7 +10,7 @@ from datetime import datetime
 from .GetUser import *
 # Create your views here.
 
-from ...FFS_Server.permissions import *
+from FFS_Server.permissions import *
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from rest_framework.views import APIView
 from rest_framework.permissions import *
