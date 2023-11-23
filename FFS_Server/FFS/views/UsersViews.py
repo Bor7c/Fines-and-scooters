@@ -21,7 +21,7 @@ from ..models import *
 from rest_framework.decorators import api_view
 from ..filters import *
 from .GetUser import *
-from ..permissions import *
+from ...FFS_Server.permissions import *
 
 
 

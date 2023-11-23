@@ -62,6 +62,6 @@ urlpatterns = [
     path(r'breaches/', Breaches_View.as_view(), name='breaches-list'),
     path(r'breaches/<int:pk>/', Breach_View.as_view(), name='breach-action'),
 
-    path(r'cof/<int:pk>/', Change_Fine, name='cof-action'),
+    path(r'cof/<int:pk>/', CoF_View.as_view(), name='cof-action'),
 
 ]

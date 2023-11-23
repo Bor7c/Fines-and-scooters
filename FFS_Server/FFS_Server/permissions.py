@@ -1,7 +1,7 @@
 from rest_framework.permissions import BasePermission
 from django.contrib.auth.models import AnonymousUser
 
-from .models import Users
+from ..FFS.models import Users
 
 import redis # type: ignore
 from FFS_Server.settings import REDIS_HOST, REDIS_PORT

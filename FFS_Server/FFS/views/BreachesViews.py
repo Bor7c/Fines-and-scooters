@@ -12,7 +12,7 @@ from ..minio.minioClass import *
 
 
 
-from ..permissions import *
+from ...FFS_Server.permissions import *
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from rest_framework.views import APIView
 from rest_framework.permissions import *
@@ -97,7 +97,6 @@ class Breaches_View(APIView):
             return Response(status=status.HTTP_403_FORBIDDEN)
 
         userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
-        User = Users.objects.get(user_id=userId)
         Breach = Breaches.objects.filter(user = userId).filter(breach_status = 'черновик') 
         if len(Breach) > 0:
             BreachId = Breach[0].breach_id
@@ -108,10 +107,6 @@ class Breaches_View(APIView):
             Breach.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response(status=status.HTTP_400_BAD_REQUEST)
-
-    
-
-
 
 
 
@@ -125,18 +120,27 @@ class Breach_View(APIView):
         """
         Возвращает одно нарушение
         """
-        !!!
-        Breach = get_object_or_404(Breaches, breach_id=pk) 
-        BreachSerializer = BreachesSerializer(Breach)
+        try:
+            ssid = request.COOKIES["session_id"]
+        except:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
-        positions = ConfOfFines.objects.filter(breach=pk)
-        FineListSerializer = PositionSerializer(positions, many=True)
+        User = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8'))
+        
+        BreachKeys = Breaches.objects.filter(user=User.user_id).values_list('breach_id', flat=True)
+        if(pk in BreachKeys) or User.admin_pass:
+            Breach = get_object_or_404(Breaches, breach_id=pk) 
+            BreachSerializer = BreachesSerializer(Breach)
 
-        WideBreach = BreachSerializer.data
+            positions = ConfOfFines.objects.filter(breach=pk)
+            FineListSerializer = PositionSerializer(positions, many=True)
 
-        WideBreach['User_login'] = Users.objects.get(user_id=WideBreach['user']).login
-        WideBreach['Fines_list'] = getFineForOneBreach(FineListSerializer)
-        return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
+            WideBreach = BreachSerializer.data
+
+            WideBreach['User_login'] = Users.objects.get(user_id=WideBreach['user']).login
+            WideBreach['Fines_list'] = getFineForOneBreach(FineListSerializer)
+            return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
+        return Response(status=status.HTTP_403_FORBIDDEN)
     
     # перевод заказа модератором на статус A или W
     # можно только если авторизован и модератор
