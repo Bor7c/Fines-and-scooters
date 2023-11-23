@@ -58,7 +58,7 @@ class Breaches_View(APIView):
         WideBreach = BreachSerializer.data
         for i, wb in enumerate(BreachSerializer.data):
             User = get_object_or_404(Users, user_id=wb.get('user'))     
-            WideBreach[i]['User_login'] = User.login                         
+            WideBreach[i]['User_login'] = User.Userlogin                         
         return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
     
     # отправка заказа пользователем

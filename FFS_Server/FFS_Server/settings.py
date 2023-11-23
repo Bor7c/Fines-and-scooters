@@ -90,7 +90,6 @@ ROOT_URLCONF = 'FFS_Server.urls'
 
 CORS_ALLOWED_ORIGINS = [
     # Frontend
-
     "http://localhost:3000",
     "http://127.0.0.1:3000",
     # Backend
