@@ -137,7 +137,7 @@ class Breach_View(APIView):
 
             WideBreach = BreachSerializer.data
 
-            WideBreach['User_login'] = Users.objects.get(user_id=WideBreach['user']).login
+            WideBreach['User_login'] = Users.objects.get(user_id=WideBreach['user']).Userlogin
             WideBreach['Fines_list'] = getFineForOneBreach(FineListSerializer)
             return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_403_FORBIDDEN)
@@ -161,5 +161,5 @@ class Breach_View(APIView):
             Breach.save()
             serializer = BreachesSerializer(Breach)
             return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
-        return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response('Нарушение удалено',status=status.HTTP_400_BAD_REQUEST)
 
