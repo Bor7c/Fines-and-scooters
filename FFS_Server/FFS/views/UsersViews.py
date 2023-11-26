@@ -55,7 +55,7 @@ class UserViewSet(ModelViewSet):
                                      password=serializer.data['password'],
                                      is_superuser=serializer.data['is_superuser'],
                                      is_staff=serializer.data['is_staff'],
-                                     is_moderator=serializer.data['is_moderator'])
+                                     admin_pass=serializer.data['admin_pass'])
             return Response({'status': 'Success'}, status=200)
         return Response({'status': 'Error', 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 

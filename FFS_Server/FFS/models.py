@@ -3,11 +3,11 @@ from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserM
 
 
 class NewUserManager(UserManager):
-    def create_user(self, login, password=None, **extra_fields):
-        if not login:
+    def create_user(self, Userlogin, password=None, **extra_fields):
+        if not Userlogin:
             raise ValueError('User must have a login')
         
-        user: Users = self.model(login=login, **extra_fields) 
+        user: Users = self.model(Userlogin=Userlogin, **extra_fields) 
         user.set_password(password)
         user.save(using=self.db)
         return user
