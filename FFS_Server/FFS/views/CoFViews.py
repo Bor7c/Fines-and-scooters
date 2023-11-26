@@ -41,6 +41,12 @@ class CoF_View(APIView):
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         cof = ConfOfFines.objects.filter(fine=fine).filter(breach=BreachId)
+        
+        if len(cof) > 0:
+            cof[0].fine_desc =request.data['fine_desc']
+            cof[0].save()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
     
     # удаление штрафа из нарушения
     # можно только если авторизован
