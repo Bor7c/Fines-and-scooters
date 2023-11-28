@@ -52,14 +52,31 @@ class Breaches_View(APIView):
         """
         Возвращает список нарушений
         """
-        BreachesList = BreachesFilter(Breaches.objects.all(),request)
-        BreachSerializer = BreachesSerializer(BreachesList, many=True)  
+        try:
+            ssid = request.COOKIES["session_id"]
+        except:
+            return Response(status=status.HTTP_403_FORBIDDEN)
 
+        User = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8'))
+        
+
+        if User.admin_pass:
+            BreachesList = BreachesFilter(Breaches.objects.all(),request) 
+        else:
+            BreachesList = BreachesFilter(Breaches.objects.filter(user=User.user_id),request)
+
+        BreachSerializer = BreachesSerializer(BreachesList, many=True)  
         WideBreach = BreachSerializer.data
         for i, wb in enumerate(BreachSerializer.data):
             User = get_object_or_404(Users, user_id=wb.get('user'))     
             WideBreach[i]['User_login'] = User.Userlogin                         
         return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
+        
+
+        
+        
+        
+
     
     # отправка заказа пользователем
     # можно только если авторизован
@@ -142,7 +159,7 @@ class Breach_View(APIView):
             return Response(WideBreach, status=status.HTTP_202_ACCEPTED)
         return Response(status=status.HTTP_403_FORBIDDEN)
     
-    # перевод заказа модератором на статус A или W
+    # перевод заказа модератором на статус
     # можно только если авторизован и модератор
     @method_permission_classes((IsModerator,))
     @swagger_auto_schema(request_body=BreachesSerializer)

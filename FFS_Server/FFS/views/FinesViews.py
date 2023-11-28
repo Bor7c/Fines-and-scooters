@@ -43,16 +43,18 @@ class Fines_View(APIView):
 
     # получение списка продуктов
     # можно всем
+    
     def get(self, request, format=None):
         """
         Возвращает список штрафов
         """
         try:
             ssid = request.COOKIES["session_id"]
+            userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
         except:
-            return Response(status=status.HTTP_403_FORBIDDEN)
+            userId = -1
 
-        userId = Users.objects.get(Userlogin=session_storage.get(ssid).decode('utf-8')).user_id
+
         TrueBreach = Breaches.objects.filter(user_id = userId).filter(breach_status = 'черновик') 
         if TrueBreach.exists():
             BreachId = TrueBreach[0].breach_id
