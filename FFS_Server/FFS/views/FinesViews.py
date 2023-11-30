@@ -6,7 +6,6 @@ from ..serializers import FinesSerializer, BreachesSerializer, ConfOfFinesSerial
 from ..models import *
 from rest_framework.decorators import api_view
 from ..filters import *
-from .GetUser import *
 from ..minio.minioClass import *
 from datetime import datetime
 
@@ -66,7 +65,7 @@ class Fines_View(APIView):
         FinesList = FinesFilter(Fines.objects.filter(fine_status='действует'),request)
         FinesListData = [getFineWithImage(FinesSerializer(fine)) for fine in FinesList]
         List['fines'] = FinesListData
-        return Response(List)
+        return Response(List, status=status.HTTP_202_ACCEPTED)
     
     
     # добавление штрафа

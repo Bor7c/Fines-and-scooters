@@ -7,7 +7,6 @@ from ..models import *
 from rest_framework.decorators import api_view
 from ..filters import *
 from datetime import datetime
-from .GetUser import *
 # Create your views here.
 
 from FFS_Server.permissions import *

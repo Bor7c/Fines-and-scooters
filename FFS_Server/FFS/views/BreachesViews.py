@@ -7,7 +7,6 @@ from ..models import *
 from rest_framework.decorators import api_view
 from ..filters import *
 from datetime import datetime
-from .GetUser import *
 from ..minio.minioClass import *
 
 
@@ -64,6 +63,8 @@ class Breaches_View(APIView):
             BreachesList = BreachesFilter(Breaches.objects.all(),request) 
         else:
             BreachesList = BreachesFilter(Breaches.objects.filter(user=User.user_id),request)
+
+        # BreachesList = BreachesFilter(Breaches.objects.all(),request)
 
         BreachSerializer = BreachesSerializer(BreachesList, many=True)  
         WideBreach = BreachSerializer.data

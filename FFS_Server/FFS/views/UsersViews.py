@@ -9,6 +9,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework.decorators import permission_classes, authentication_classes, api_view
 from drf_yasg.utils import swagger_auto_schema # type: ignore
 
+from datetime import timedelta 
+
 
 import uuid
 from FFS_Server.settings import REDIS_HOST, REDIS_PORT
@@ -20,7 +22,6 @@ from ..serializers import *
 from ..models import *
 from rest_framework.decorators import api_view
 from ..filters import *
-from .GetUser import *
 from FFS_Server.permissions import *
 
 
@@ -60,34 +61,64 @@ class UserViewSet(ModelViewSet):
         return Response({'status': 'Error', 'error': serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+@api_view(['Post'])
 @permission_classes([AllowAny])
-@authentication_classes([])
-@csrf_exempt
+def check(request):
+    session_id = request.headers.get("authorization")
+    print(session_id)
+
+    print(session_storage.get(session_id))
+
+    if (session_storage.get(session_id)):
+        user = Users.objects.get(Userlogin=session_storage.get(session_id).decode('utf-8'))
+        
+        serializer = UserSerializer(user, many=False)
+        print(serializer.data)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_403_FORBIDDEN)
+
+
 @swagger_auto_schema(method='post', request_body=UserSerializer)
 @api_view(['Post'])
+@permission_classes([AllowAny])
 def login_view(request):
-    Userlogin = request.data["Userlogin"]
+    print(request.data)
+    Userlogin = request.data["userlogin"]
     password = request.data["password"]
     user = authenticate(request, Userlogin=Userlogin, password=password)
     if user is not None:
         random_key = str(uuid.uuid4())
         session_storage.set(random_key, Userlogin)
 
-        response = HttpResponse("{'status': 'ok'}")
-        response.set_cookie("session_id", random_key)
+        print(user.last_login)
+        print(user.get_username())
+
+        data = {
+            "session_id": random_key,
+            "user_id": user.pk,
+            "UserLogin": user.Userlogin,
+            "admin_pass": user.admin_pass
+        }
+
+        response = Response(data, status=status.HTTP_201_CREATED)
+        response.set_cookie("session_id", random_key, httponly=False, expires=timedelta(days=1))
+
 
         return response
     else:
         return HttpResponse("{'status': 'error', 'error': 'login failed'}")
 
-@permission_classes([AllowAny])
-@authentication_classes([])
+
+
 @csrf_exempt
 @swagger_auto_schema(method='post')
 @api_view(['Post'])
+@permission_classes([AllowAny])
 def logout_view(request):
     try:
-        ssid = request.COOKIES["session_id"]
+       ssid = request.headers.get("authorization")
     except:
         return HttpResponse("{'status': 'error', 'error': 'logout failed'}")
         

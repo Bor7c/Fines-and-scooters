@@ -55,6 +55,7 @@ urlpatterns = [
 
     path('accounts/login/', login_view, name='login'),
     path('accounts/logout/', logout_view, name='logout'),
+    path('accounts/check/', check, name='logout'),
 
     path(r'fines/', Fines_View.as_view(), name='fines-list'),
     path(r'fines/<int:pk>/', Fine_View.as_view(), name='fine-action'),
