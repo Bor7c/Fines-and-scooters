@@ -119,6 +119,7 @@ def login_view(request):
 def logout_view(request):
     try:
        ssid = request.headers.get("authorization")
+       print(ssid)
     except:
         return HttpResponse("{'status': 'error', 'error': 'logout failed'}")
         
