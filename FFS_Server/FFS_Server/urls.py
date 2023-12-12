@@ -45,7 +45,7 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-router.register(r'users', UserViewSet, basename='user')
+# router.register(r'users', UserViewSet, basename='user')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -53,16 +53,17 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
 
-    path('accounts/login/', login_view, name='login'),
-    path('accounts/logout/', logout_view, name='logout'),
-    path('accounts/check/', check, name='logout'),
+    path('accounts/login/', login_view),
+    path('accounts/logout/', logout_view),
+    path('accounts/check/', check),
 
-    path(r'fines/', Fines_View.as_view(), name='fines-list'),
-    path(r'fines/<int:pk>/', Fine_View.as_view(), name='fine-action'),
+    path(r'fines/search/', search_fines),
+    path(r'fines/<int:fine_id>/', get_fine),
+    path(r'fines/<int:fine_id>/add_to_breach/', add_fine_to_breach),
 
-    path(r'breaches/', Breaches_View.as_view(), name='breaches-list'),
-    path(r'breaches/<int:pk>/', Breach_View.as_view(), name='breach-action'),
-
-    path(r'cof/<int:pk>/', CoF_View.as_view(), name='cof-action'),
-
+    path(r'breaches/', search_breaches),
+    path(r'breaches/draft/', get_draft_breach),
+    path(r'breaches/<int:breach_id>/delete/', delete_breach),
+    path(r'breaches/<int:breach_id>/delete_fine/<int:fine_id>/', delete_fine_from_breach),
+    path(r'breaches/<int:breach_id>/update_status_user/', update_breach_status_user),
 ]

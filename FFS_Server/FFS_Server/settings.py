@@ -30,10 +30,6 @@ ALLOWED_HOSTS = []
 
 # Application definition
 
-
-
-
-
 INSTALLED_APPS = [
     'django.contrib.staticfiles',  #Необходим для  swagger ui's css/js файлов (По умолчанию включен)
     'drf_yasg',
@@ -46,16 +42,6 @@ INSTALLED_APPS = [
     'FFS',
     'corsheaders',
 ]
-
-REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': [
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-    ],
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ],
-}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -72,7 +58,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'FFS.Users'
+AUTH_USER_MODEL = 'FFS.CustomUser'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -102,7 +88,6 @@ CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
 CORS_ALLOWED_URLS = [
     r"^/fines/$",
     r"^/fines/\d+/$",
-
 ]
 
 CORS_ALLOW_HEADERS = [
@@ -145,7 +130,7 @@ WSGI_APPLICATION = 'FFS_Server.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'FFS',
+        'NAME': 'FFSN',
         'USER': 'bor7c',
         'PASSWORD': '123',
         'HOST': 'localhost',
@@ -201,6 +186,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 REDIS_HOST = '127.0.0.1'
 REDIS_PORT = 6379
 
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+AWS_STORAGE_BUCKET_NAME = 'fines'
+AWS_ACCESS_KEY_ID = 'uZgSmUJn3Iva7cxmbIkP'
+AWS_SECRET_ACCESS_KEY = 'l717atbSOQhNleo9nE5e6I6Nkhq6nF9ocdYLdsT7'
+AWS_S3_ENDPOINT_URL = 'http://127.0.0.1:9000'
 
 
 

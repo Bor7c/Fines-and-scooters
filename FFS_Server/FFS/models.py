@@ -1,58 +1,100 @@
+from django.contrib.auth.base_user import BaseUserManager
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
+from datetime import datetime
+from django.utils import timezone
 
 
-class NewUserManager(UserManager):
-    def create_user(self, Userlogin, password=None, **extra_fields):
-        if not Userlogin:
-            raise ValueError('User must have a login')
-        
-        user: Users = self.model(Userlogin=Userlogin, **extra_fields) 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, username, email, password="1234", **extra_fields):
+        extra_fields.setdefault('username', username)
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        user.save(using=self.db)
+        user.save()
         return user
+
+    def create_superuser(self, username, email, password="1234", **extra_fields):
+        extra_fields.setdefault('is_moderator', True)
+        extra_fields.setdefault('is_active', True)
+        extra_fields.setdefault("is_staff", True)
+        extra_fields.setdefault('is_superuser', True)
+        return self.create_user(username, email, password, **extra_fields)
+
+
+class CustomUser(AbstractBaseUser, PermissionsMixin):
+    email = models.EmailField(unique=True)
+    username = models.CharField(unique=True)
+    is_moderator = models.BooleanField(default=False)
+
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = []
+
+    def __str__(self):
+        return self.username
+
+    class Meta:
+        verbose_name = "Пользователь"
+        verbose_name_plural = "Пользователи"
 
 
 class Breaches(models.Model):
-    breach_id = models.BigAutoField(primary_key=True)
-    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    closed_date = models.DateTimeField(blank=True, null=True)
-    created_date = models.DateTimeField(blank=True, null=True)
+    STATUS_CHOICES = (
+        (1, 'Введён'),
+        (2, 'В работе'),
+        (3, 'Завершён'),
+        (4, 'Отменён'),
+        (5, 'Удалён'),
+    )
+
+    user = models.ForeignKey(CustomUser, models.CASCADE, blank=True, null=True)
+    created_date = models.DateTimeField(default=datetime.now(tz=timezone.utc), blank=True, null=True)
     formated_date = models.DateTimeField(blank=True, null=True)
-    breach_status = models.CharField(max_length=20, default='черновик')  # This field type is a guess.
-    moder_id = models.IntegerField(blank=True, null=True)
-    
+    closed_date = models.DateTimeField(blank=True, null=True)
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
+
+    def __str__(self):
+        return "Нарушение №" + str(self.pk)
+
+    class Meta:
+        verbose_name = "Нарушение"
+        verbose_name_plural = "Нарушения"
 
 
 class Fines(models.Model):
-    fine_id = models.AutoField(primary_key=True)
-    picture_url = models.CharField(blank=True, null=True)
-    title = models.CharField(blank=True, null=True, max_length=70, unique=True)
+    STATUS_CHOICES = (
+        (1, 'Действует'),
+        (2, 'Удалена'),
+    )
+
+    image = models.ImageField(default="images/default.jpg", blank=True, null=True)
+    title = models.CharField(blank=True, null=True, max_length=70)
     price = models.CharField(blank=True, null=True)
     text = models.CharField(blank=True, null=True)
-    fine_status = models.CharField(default='действует', max_length=15)  # This field type is a guess.
+    status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
+
+    def __str__(self):
+        return self.title
+
+    class Meta:
+        verbose_name = "Штраф"
+        verbose_name_plural = "Штрафы"
+
 
 class ConfOfFines(models.Model):
-    cofid = models.BigAutoField(primary_key=True)
-    fine = models.ForeignKey('Fines', models.DO_NOTHING)
-    breach = models.ForeignKey('Breaches', models.DO_NOTHING)
+    fine = models.ForeignKey(Fines, models.CASCADE, null=True)
+    breach = models.ForeignKey(Breaches, models.CASCADE, null=True)
     fine_desc = models.CharField(blank=True, null=True, max_length=400)
 
     class Meta:
         unique_together = (('fine', 'breach'),)
-
-class Users(AbstractBaseUser):
-    objects = NewUserManager()
-
-    user_id = models.AutoField(primary_key=True)
-    Userlogin = models.CharField(max_length=255, unique=True, verbose_name="Логин")
-    password = models.CharField(max_length=255, verbose_name="Пароль")
-    admin_pass = models.BooleanField(blank=True, null=True, default=False)
-    is_staff = models.BooleanField(default=False, verbose_name="Является ли пользователь менеджером?")
-    is_superuser = models.BooleanField(default=False, verbose_name="Является ли пользователь админом?")
-    
-    USERNAME_FIELD = 'Userlogin'
-
+        verbose_name = "Штраф-нарушение"
+        verbose_name_plural = "Штрафы-нарушение"
 
 
     
