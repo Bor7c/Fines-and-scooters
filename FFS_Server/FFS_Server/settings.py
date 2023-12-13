@@ -74,6 +74,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'FFS_Server.urls'
 
+
 CORS_ALLOWED_ORIGINS = [
     # Frontend
     "http://localhost:3000",
