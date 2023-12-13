@@ -15,6 +15,8 @@ from ..utils import get_session
 session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 
 
+
+
 @api_view(["GET"])
 def search_fines(request):
     query = request.GET.get("title", "")

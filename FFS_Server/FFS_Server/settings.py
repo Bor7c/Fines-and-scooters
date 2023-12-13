@@ -81,6 +81,9 @@ CORS_ALLOWED_ORIGINS = [
     # Backend
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+
+    "exp://192.168.51.1:8081",
+    "http://192.168.51.1:8081",
 ]
 
 CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
