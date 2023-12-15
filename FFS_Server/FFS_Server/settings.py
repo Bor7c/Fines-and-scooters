@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-a_$n8dhsz14w#^v^0_1(muv06(sx#ykyjt!crx_bni=ljcrnbe
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'rest_framework',
     'FFS',
-    'corsheaders',
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -68,45 +67,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'FFS_Server.urls'
 
-
-CORS_ALLOWED_ORIGINS = [
-    # Frontend
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    # Backend
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-
-    "exp://192.168.51.1:8081",
-    "http://192.168.51.1:8081",
-]
-
-CORS_ALLOW_METHODS = ['DELETE', 'GET', 'OPTIONS', 'PATCH', 'POST', 'PUT']
-
-CORS_ALLOWED_URLS = [
-    r"^/fines/$",
-    r"^/fines/\d+/$",
-]
-
-CORS_ALLOW_HEADERS = [
-    "accept",
-    "accept-encoding",
-    "authorization",
-    "content-type",
-    "dnt",
-    "origin",
-    "user-agent",
-    "x-csrftoken",
-    "x-requested-with",
-]
-
-CORS_ALLOW_CREDENTIALS = True
 
 
 TEMPLATES = [
@@ -196,6 +161,8 @@ AWS_STORAGE_BUCKET_NAME = 'fines'
 AWS_ACCESS_KEY_ID = 'uZgSmUJn3Iva7cxmbIkP'
 AWS_SECRET_ACCESS_KEY = 'l717atbSOQhNleo9nE5e6I6Nkhq6nF9ocdYLdsT7'
 AWS_S3_ENDPOINT_URL = 'http://127.0.0.1:9000'
+AWS_S3_ENDPOINT_URL = 'http://192.168.51.1:9000'
+AWS_S3_ENDPOINT_URL = 'http://192.168.226.1:9000'
 
 
 
