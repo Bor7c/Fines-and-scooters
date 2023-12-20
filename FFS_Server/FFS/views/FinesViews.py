@@ -20,7 +20,7 @@ session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 @api_view(["GET"])
 def search_fines(request):
     query = request.GET.get("title", "")
-    fines = Fines.objects.filter(title__icontains=query)
+    fines = Fines.objects.filter(title__icontains=query , status=1)
     draft_breach = find_draft_breach(request)
 
     data = {
