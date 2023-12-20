@@ -6,8 +6,9 @@ from ..models import *
 
 from FFS_Server.permissions import *
 from rest_framework.decorators import permission_classes, api_view
-from FFS_Server.settings import REDIS_HOST, REDIS_PORT
+from FFS_Server.settings import REDIS_HOST, REDIS_PORT, MY_PASSWORD
 import redis
+import requests
 
 from ..utils import get_session
 
@@ -73,16 +74,38 @@ def delete_breach(request, breach_id):
 
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
-def update_breach_status_user(request, breach_id):
-    if not Breaches.objects.filter(pk=breach_id).exists():
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    breach = Breaches.objects.get(pk=breach_id)
+def update_breach_status_user(request):
+    breach = find_draft_breach(request)
     breach.status = 2
+
+    # Сервис
+    url = "http://localhost:5000/name/"
+    params = {"breach_id": breach.pk}
+    response = requests.post(url, json=params)
+    print(response.status_code)
+
     breach.formated_date = datetime.now(tz=timezone.utc)
     breach.save()
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+def update_breach_name(request, breach_id):
+    name = request.data["name"]
+    password = request.data["password"]
+    if password != MY_PASSWORD:
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    try:
+        Breach = Breaches.objects.get(pk=breach_id)
+        Breach.name = name
+        Breach.save()
+        return Response(status=status.HTTP_200_OK)
+    except Breaches.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+
+
 
 
 def find_draft_breach(request):

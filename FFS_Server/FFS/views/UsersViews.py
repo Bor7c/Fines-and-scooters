@@ -33,7 +33,7 @@ def check(request):
     return Response(status=status.HTTP_403_FORBIDDEN)
 
 
-@swagger_auto_schema(method='post', request_body=UserSerializer)
+@swagger_auto_schema(method='post', request_body=UserLoginSerializer)
 @api_view(['Post'])
 @permission_classes([AllowAny])
 def login_view(request):

@@ -56,6 +56,7 @@ class Breaches(models.Model):
     created_date = models.DateTimeField(default=datetime.now(tz=timezone.utc), blank=True, null=True)
     formated_date = models.DateTimeField(blank=True, null=True)
     closed_date = models.DateTimeField(blank=True, null=True)
+    name = models.CharField(blank=True, null=True, max_length=70)
     status = models.IntegerField(choices=STATUS_CHOICES, default=1, verbose_name="Статус")
 
     def __str__(self):
