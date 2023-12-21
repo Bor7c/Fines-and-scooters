@@ -22,7 +22,10 @@ def search_breaches(request):
 
     user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
 
-    breaches = Breaches.objects.filter(user_id=user.pk)
+    if user.is_moderator == True:
+        breaches = Breaches.objects.all()
+    else: 
+        breaches = Breaches.objects.filter(user_id=user.pk)
 
     serializer = BreachesSerializer(breaches, many=True)
 
