@@ -1,8 +1,11 @@
 from .models import *
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer
 
-from collections import OrderedDict
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ('id', 'username', 'email', 'is_moderator')
 
 
 class FinesSerializer(serializers.ModelSerializer):
@@ -10,43 +13,35 @@ class FinesSerializer(serializers.ModelSerializer):
         # Модель, которую мы сериализуем
         model = Fines
         # Поля, которые мы сериализуем
-        fields = ["fine_id", "picture_url", "title", "price", "text", "fine_status"]
+        fields = '__all__'
 
-class FinesInBreachSerializer(serializers.ModelSerializer):
-    class Meta:
-        # Модель, которую мы сериализуем
-        model = Fines
-        # Поля, которые мы сериализуем
-        fields = ["title", "price", "text"]        
 
 class BreachesSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True, many=False)
+    fines = serializers.SerializerMethodField()
+
+    def get_fines(self, breach):
+        confs = ConfOfFines.objects.filter(breach=breach)
+        return FinesSerializer([conf.fine for conf in confs], many=True).data
+
     class Meta:
         # Модель, которую мы сериализуем
         model = Breaches
         # Поля, которые мы сериализуем
-        fields = ["breach_id", "user", "closed_date","created_date", "formated_date","breach_status","moder_id"]        
+        fields = '__all__'
+
 
 class ConfOfFinesSerializer(serializers.ModelSerializer):
+    fine = FinesSerializer(read_only=True, many=False)
+    breach = BreachesSerializer(read_only=True, many=False)
+
     class Meta:
         # Модель, которую мы сериализуем
         model = ConfOfFines
         # Поля, которые мы сериализуем
-        fields = ["cofid", "fine", "breach", "fine_desc"]   
+        fields = '__all__'
 
 
-class PositionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ConfOfFines
-        fields = ["fine_desc","fine"]
-
-
-
-
-class UserSerializer(ModelSerializer):
-    admin_pass = serializers.BooleanField(default=False, required=False)
-    is_staff = serializers.BooleanField(default=False, required=False)
-    is_superuser = serializers.BooleanField(default=False, required=False)
-
-    class Meta:
-        model = Users
-        fields = ["user_id", "Userlogin", "password", "admin_pass", "is_staff", "is_superuser"]
+class UserLoginSerializer(serializers.Serializer):
+    username = serializers.CharField(required=True)
+    password = serializers.CharField(required=True)
