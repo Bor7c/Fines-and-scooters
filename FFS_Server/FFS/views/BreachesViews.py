@@ -1,3 +1,7 @@
+from django.shortcuts import get_object_or_404
+from django.utils.dateparse import parse_datetime
+from django.utils.dateparse import parse_date
+from django.utils.timezone import make_aware
 from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import *
@@ -19,16 +23,40 @@ session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 @permission_classes([IsAuthenticated])
 def search_breaches(request):
     session_id = get_session(request)
-
-    user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
+    user = get_object_or_404(CustomUser, username=session_storage.get(session_id).decode('utf-8'))
 
     if user.is_moderator == True:
         breaches = Breaches.objects.all()
     else: 
         breaches = Breaches.objects.filter(user_id=user.pk)
 
-    serializer = BreachesSerializer(breaches, many=True)
+    # Get parameters for date range and status from the request
+    start_date = request.query_params.get('start_date', None)
+    end_date = request.query_params.get('end_date', None)
+    status = request.query_params.get('status', None)
 
+     # Parse start_date and end_date and filter the query if they are provided
+    if start_date:
+        breaches = breaches.filter(formated_date__gte=start_date)
+
+    if end_date:
+            breaches = breaches.filter(formated_date__lte=end_date)
+
+    # If status parameter is provided, filter by the status
+    if status:
+        try:
+            status_num = int(status)
+            if status_num in dict(Breaches.STATUS_CHOICES).keys():
+                breaches = breaches.filter(status=status_num)
+        except ValueError:
+            pass  # or you could return an error message that status must be an integer
+
+
+    print(start_date)
+
+    # Serialize and return response
+    serializer = BreachesSerializer(breaches, many=True)
+    # print(serializer.data)
     return Response(serializer.data)
 
 
