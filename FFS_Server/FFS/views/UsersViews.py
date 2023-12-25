@@ -27,6 +27,7 @@ def check(request):
         user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
 
         serializer = UserSerializer(user, many=False)
+        # print(serializer.data)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
 

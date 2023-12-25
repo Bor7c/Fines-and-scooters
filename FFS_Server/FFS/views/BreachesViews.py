@@ -117,8 +117,29 @@ def update_breach_status_user(request):
 
     breach.formated_date = datetime.now(tz=timezone.utc)
     breach.save()
+    serializer = BreachesSerializer(breach, many=False)
 
     return Response(status=status.HTTP_200_OK)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def update_breach_status_admin(request, breach_id):
+    session_id = get_session(request)
+    user = get_object_or_404(CustomUser, username=session_storage.get(session_id).decode('utf-8'))
+    print(user)
+    print(request.data)
+
+    if not user.is_moderator == True:
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    
+    Breach = Breaches.objects.get(pk=breach_id)
+    Breach.status = request.data['status']
+    Breach.closed_date = datetime.now()
+    Breach.save()
+    serializer = BreachesSerializer(Breach)
+    return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+
 
 
 @api_view(["PUT"])

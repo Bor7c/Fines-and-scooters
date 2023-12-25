@@ -1,3 +1,4 @@
+from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.decorators import permission_classes, api_view
 from rest_framework.response import Response
@@ -17,8 +18,15 @@ session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 
 @api_view(["GET"])
 def search_fines(request):
+    # session_id = get_session(request)
+    
+    # user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
+
     query = request.GET.get("title", "")
-    fines = Fines.objects.filter(title__icontains=query)
+    # if user.is_moderator:
+    #     fines = Fines.objects.filter(title__icontains=query)
+    # else:
+    fines = Fines.objects.filter(title__icontains=query, status=1)
     draft_breach = find_draft_breach(request)
 
     data = {
@@ -35,6 +43,51 @@ def get_fine(request, fine_id):
     serializer = FinesSerializer(fine, many=False)
 
     return Response(serializer.data)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticated])
+def edit_fine(request, fine_id):
+
+    session_id = get_session(request)
+    if session_id is None:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    
+    user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
+    if not user.is_moderator:
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    
+    fine = Fines.objects.get(pk=fine_id)
+
+    fields = request.data.keys()
+    if 'pk' in fields:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer = FinesSerializer(fine, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def add_fine(request):
+    print(request.data)
+    session_id = get_session(request)
+    if session_id is None:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    
+    user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))    
+    if not user.is_moderator:
+        return Response(status=status.HTTP_403_FORBIDDEN)
+    
+    fields = request.data.keys()
+    if 'pk' in fields:
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    serializer = FinesSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_202_ACCEPTED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(["POST"])
