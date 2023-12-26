@@ -17,6 +17,27 @@ session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 
 
 @api_view(["GET"])
+def fines(request):
+    # session_id = get_session(request)
+    
+    # user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
+
+    query = request.GET.get("title", "")
+    # if user.is_moderator:
+    #     fines = Fines.objects.filter(title__icontains=query)
+    # else:
+    fines = Fines.objects.filter(title__icontains=query)
+    draft_breach = find_draft_breach(request)
+
+    data = {
+        "breach": BreachesSerializer(draft_breach, many=False).data,
+        "fines": FinesSerializer(fines, many=True).data
+    }
+
+    return Response(data)
+
+
+@api_view(["GET"])
 def search_fines(request):
     # session_id = get_session(request)
     
