@@ -73,7 +73,7 @@ class Fines(models.Model):
         (2, 'Удалена'),
     )
 
-    image = models.ImageField(default="images/default.jpg", blank=True, null=True)
+    image = models.ImageField(default="null", blank=True, null=True)
     title = models.CharField(blank=True, null=True, max_length=70)
     price = models.CharField(blank=True, null=True)
     text = models.CharField(blank=True, null=True)
