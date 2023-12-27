@@ -34,6 +34,15 @@ def search_breaches(request):
     start_date = request.query_params.get('start_date', None)
     end_date = request.query_params.get('end_date', None)
     status = request.query_params.get('status', None)
+    
+
+    if user.is_moderator == True:
+            FilterUser = request.query_params.get('user', None)
+
+            filter_user_ids = CustomUser.objects.filter(username__icontains=FilterUser).values_list('id', flat=True)  # Получаем список идентификаторов пользователей
+            breaches = breaches.filter(user__id__in=filter_user_ids)
+
+                
 
      # Parse start_date and end_date and filter the query if they are provided
     if start_date:
