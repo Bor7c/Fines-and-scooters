@@ -18,19 +18,12 @@ session_storage = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT)
 
 @api_view(["GET"])
 def fines(request):
-    # session_id = get_session(request)
-    
-    # user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
-
     query = request.GET.get("title", "")
-    # if user.is_moderator:
-    #     fines = Fines.objects.filter(title__icontains=query)
-    # else:
     fines = Fines.objects.filter(title__icontains=query)
     draft_breach = find_draft_breach(request)
 
     data = {
-        "breach": BreachesSerializer(draft_breach, many=False).data,
+        "breach_id": draft_breach.id if draft_breach else None,
         "fines": FinesSerializer(fines, many=True).data
     }
 
@@ -39,19 +32,12 @@ def fines(request):
 
 @api_view(["GET"])
 def search_fines(request):
-    # session_id = get_session(request)
-    
-    # user = CustomUser.objects.get(username=session_storage.get(session_id).decode('utf-8'))
-
     query = request.GET.get("title", "")
-    # if user.is_moderator:
-    #     fines = Fines.objects.filter(title__icontains=query)
-    # else:
     fines = Fines.objects.filter(title__icontains=query, status=1)
     draft_breach = find_draft_breach(request)
 
     data = {
-        "breach": BreachesSerializer(draft_breach, many=False).data,
+        "breach_id": draft_breach.id if draft_breach else None,
         "fines": FinesSerializer(fines, many=True).data
     }
 
@@ -69,7 +55,7 @@ def get_fine(request, fine_id):
 @api_view(["PUT"])
 @permission_classes([IsAuthenticated])
 def edit_fine(request, fine_id):
-
+    print(request.data)
     session_id = get_session(request)
     if session_id is None:
         return Response(status=status.HTTP_401_UNAUTHORIZED)

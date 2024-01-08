@@ -65,7 +65,7 @@ urlpatterns = [
     path(r'fines/add/', add_fine),
 
     path(r'breaches/', search_breaches),
-    path(r'breaches/draft/', get_draft_breach),
+    path(r'breaches/<int:breach_id>/', get_breach),
     path(r'breaches/<int:breach_id>/delete/', delete_breach),
     path(r'breaches/<int:breach_id>/name/', update_breach_name),
     path(r'breaches/<int:breach_id>/delete_fine/<int:fine_id>/', delete_fine_from_breach),

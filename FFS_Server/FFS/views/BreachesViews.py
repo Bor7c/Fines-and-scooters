@@ -71,13 +71,13 @@ def search_breaches(request):
 
 @api_view(["GET"])
 @permission_classes([IsAuthenticated])
-def get_draft_breach(request):
-    draft_breach = find_draft_breach(request)
+def get_breach(request, breach_id):
+    breach = Breaches.objects.get(pk=breach_id)
 
-    if draft_breach is None:
+    if breach is None:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
-    serializer = BreachesSerializer(draft_breach, many=False)
+    serializer = BreachesSerializer(breach, many=False)
 
     return Response(serializer.data, status=status.HTTP_200_OK)
 
