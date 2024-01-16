@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from ..serializers import *
 from ..models import *
+from django.db.models import Q
 
 
 from FFS_Server.permissions import *
@@ -25,10 +26,11 @@ def search_breaches(request):
     session_id = get_session(request)
     user = get_object_or_404(CustomUser, username=session_storage.get(session_id).decode('utf-8'))
 
+    statuses = [2, 3, 4]
     if user.is_moderator == True:
-        breaches = Breaches.objects.all()
+        breaches = Breaches.objects.filter(status__in=statuses)
     else: 
-        breaches = Breaches.objects.filter(user_id=user.pk)
+        breaches = Breaches.objects.filter(Q(user_id=user.pk) & Q(status__in=statuses))
 
     # Get parameters for date range and status from the request
     start_date = request.query_params.get('start_date', None)
@@ -36,11 +38,11 @@ def search_breaches(request):
     status = request.query_params.get('status', None)
     
 
-    if user.is_moderator == True:
-            FilterUser = request.query_params.get('user', None)
+    # if user.is_moderator == True:
+    #         FilterUser = request.query_params.get('user', None)
 
-            filter_user_ids = CustomUser.objects.filter(username__icontains=FilterUser).values_list('id', flat=True)  # Получаем список идентификаторов пользователей
-            breaches = breaches.filter(user__id__in=filter_user_ids)
+    #         filter_user_ids = CustomUser.objects.filter(username__icontains=FilterUser).values_list('id', flat=True)  # Получаем список идентификаторов пользователей
+    #         breaches = breaches.filter(user__id__in=filter_user_ids)
 
                 
 
