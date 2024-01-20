@@ -6,31 +6,31 @@ from . import models
 
 
 
-def GetOrders(request):
+def Getfines(request):
     try:
         input_text = request.GET['text']
         if input_text:
-            current_orders = models.Fines.objects.filter(fine_status='действует',title__icontains=input_text)
-            return render(request, 'orders.html', {'data' : {
-                'orders': current_orders,
+            current_fines = models.Fines.objects.filter(fine_status='действует',title__icontains=input_text)
+            return render(request, 'fines.html', {'data' : {
+                'fines': current_fines,
                 'search_v': input_text,
             }})
     except:
-        return render(request, 'orders.html', {'data' : {
-                'orders': models.Fines.objects.filter(fine_status='действует'),   
+        return render(request, 'fines.html', {'data' : {
+                'fines': models.Fines.objects.filter(fine_status='действует'),   
             }})
 
-def GetOrder(request, id):
-    return render(request, 'order.html', {'data' : {
+def Getfine(request, id):
+    return render(request, 'fine.html', {'data' : {
         'id': id,
-        'order':models.Fines.objects.filter(fine_id=id).first(),
+        'fine':models.Fines.objects.filter(fine_id=id).first(),
     }})
 
 
 
 def Click_on_HideCard(request, id):
     HideCard(id)
-    return redirect(reverse('order_url'))
+    return redirect(reverse('fine_url'))
 
 
 def HideCard(id):
