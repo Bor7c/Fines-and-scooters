@@ -21,6 +21,6 @@ from SSR import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.GetOrders, name='order_url'),
-    path('order/<int:id>/', views.GetOrder, name='order_url'),
+    path('', views.GetFines, name='fine_url'),
+    path('fine/<int:id>/', views.GetFine, name='fine_url'),
 ]

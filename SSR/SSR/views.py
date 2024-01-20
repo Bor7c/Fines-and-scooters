@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from datetime import date
 
-orders = [
+fines = [
             {'img': 'https://r2.shtrafy-gibdd.ru/sg2/cms/articles/content/cd/07/b0/01/6414970f3c1333.77987776.jpeg', 'id': 1, 'short_text': 'Штраф ГИБДД за нарушение ПДД водителем СИМ', 'price': '800₽', 'text':'Обратимся к части 2 статьи 12.29 КоАП: Нарушение Правил дорожного движения лицом, управляющим велосипедом, либо возчиком или другим лицом, непосредственно участвующим в процессе дорожного движения (за исключением лиц, указанных в части 1 настоящей статьи, а также водителя транспортного средства), -влечет наложение административного штрафа в размере восьмисот рублей. Итак, штраф для водителя СИМ за нарушение любого пункта правил дорожного движения составляет 800 рублей. Такой штраф накладывается за любые нарушения, кроме нарушений: в состоянии опьянения; создающих помехи в движении транспортных средств; повлекших причинение вреда здоровью потерпевшего'},
             {'img': 'https://api.rbsmi.ru/attachments/d375dabc15203194e2b885fbc648408a3f8922a5/store/crop/0/0/650/650/1600/0/0/6f3b1838eb5f72aaae2dcb49768644ac6d0906f886f0a4ef342e760ad53f/a7ceb6800d6ff1f0ff668ad7cbf59355.jpg', 'id': 2, 'short_text': 'Штраф для водителя СИМ в состоянии опьянения', 'price': '1500₽', 'text':'Обратимся к части 3 статьи 12.29 КоАП: Нарушение Правил дорожного движения лицами, указанными в части 2 настоящей статьи, совершенное в состоянии опьянения, - влечет наложение административного штрафа в размере от одной тысячи до одной тысячи пятисот рублей. Нарушение любого пункта правил, совершенное в состоянии опьянения, влечет штраф 1 000 - 1 500 рублей.'},
             {'img': 'https://www.autopanorama.ru/announcephoto/6393.750x0-0.jpg', 'id': 3, 'short_text': 'Штраф для СИМ за создание помех', 'price': '1000₽', 'text':'Обратимся к части 1 статьи 12.30 КоАП: Нарушение Правил дорожного движения пешеходом, пассажиром транспортного средства или иным участником дорожного движения (за исключением водителя транспортного средства), повлекшее создание помех в движении транспортных средств, - влечет наложение административного штрафа в размере одной тысячи рублей. Если владелец СИМ нарушил требования правил и создал помехи для движения транспортного средства, то его ожидает штраф а размере 1 000 рублей. За создание помех велосипедисту или другому водителю СИМ штраф по части 1 статьи 12.30 не накладывается.'},
@@ -9,26 +9,26 @@ orders = [
         ]
 
 
-def GetOrders(request):
+def GetFines(request):
     try:
         input_text = request.GET['text']
         if input_text:
-            current_orders = [order for order in orders if input_text.lower() in order['short_text'].lower()]
-            return render(request, 'orders.html', {'data' : {
-                'orders': current_orders,
+            current_fines = [fine for fine in fines if input_text.lower() in fine['short_text'].lower()]
+            return render(request, 'fines.html', {'data' : {
+                'fines': current_fines,
                 'search_v': input_text,
             }})
     except:
-        return render(request, 'orders.html', {'data' : {
-                'orders': orders,   
+        return render(request, 'fines.html', {'data' : {
+                'fines': fines,   
             }})
 
-def GetOrder(request, id):
-    for order in orders:
-        if order['id'] == id:
-            current_order = order
-    return render(request, 'order.html', {'data' : {
+def GetFine(request, id):
+    for fine in fines:
+        if fine['id'] == id:
+            current_fine = fine
+    return render(request, 'fine.html', {'data' : {
         
         'id': id,
-        'order':current_order,
+        'fine':current_fine,
     }})
