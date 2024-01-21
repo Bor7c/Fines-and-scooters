@@ -59,6 +59,42 @@ def login_view(request):
         return response
     else:
         return HttpResponse(status=status.HTTP_403_FORBIDDEN)
+    
+
+@swagger_auto_schema(method='post', request_body=UserLoginSerializer)
+@api_view(['Post'])
+@permission_classes([AllowAny])
+def register_view(request):
+    username = request.data["username"]
+    password = request.data["password"]
+
+    # Создаем нового пользователя
+    user = CustomUser.objects.create_user(username, "user@user.com" ,password)
+
+    # Аутентифицируем пользователя
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        # Создаем случайный ключ сессии
+        random_key = str(uuid.uuid4())
+
+        # Сохраняем ключ сессии в хранилище (например, в базе данных)
+        session_storage.set(random_key, username)
+
+        # Формируем данные для ответа
+        data = {
+            "session_id": random_key,
+            "user_id": user.pk,
+            "username": user.username,
+            "is_moderator": user.is_moderator
+        }
+
+        # Создаем ответ с данными и устанавливаем cookie сессии
+        response = Response(data, status=status.HTTP_201_CREATED)
+        response.set_cookie("session_id", random_key, httponly=False, expires=timedelta(days=1))
+
+        return response
+    else:
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
 
 @swagger_auto_schema(method='post')
