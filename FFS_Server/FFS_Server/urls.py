@@ -57,7 +57,7 @@ urlpatterns = [
     path('accounts/logout/', logout_view),
     path('accounts/check/', check),
 
-    path(r'fines/', fines),
+    # path(r'fines/', fines),
     path(r'fines/search/', search_fines),
     path(r'fines/<int:fine_id>/', get_fine),
     path(r'fines/<int:fine_id>/add_to_breach/', add_fine_to_breach),
